@@ -16,5 +16,7 @@
   "dependencies": {
     "zeppelin-solidity": "1.3.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^4.9.0"
+  }
 }
