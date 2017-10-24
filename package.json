@@ -10,7 +10,7 @@
     "url": "https://github.com/DAVFoundation/dav-contracts"
   },
   "scripts": {
-    "compile": "./node_modules/.bin/truffle compile",
+    "build": "./node_modules/.bin/truffle compile",
     "test": "./node_modules/.bin/truffle test"
   },
   "dependencies": {
