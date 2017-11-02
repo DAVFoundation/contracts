@@ -1,6 +1,6 @@
 pragma solidity ^0.4.15;
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import '../helpers/Ownable.sol';
 
 contract Identity is Ownable {
     bytes32 public identityName;
