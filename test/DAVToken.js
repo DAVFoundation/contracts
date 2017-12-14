@@ -83,4 +83,14 @@ contract('DAVToken', function(accounts) {
     assert.equal(await token.paused(), false);
   });
 
+  it('should throw errors when calling transfer, transferFrom, approve, increaseApproval, or decreaseApproval while paused', async function() {
+    let token = await DAVToken.new();
+    await token.approve(accounts[0], 2);
+    await token.pause();
+    await expectThrow(token.transferFrom(accounts[0], accounts[1], 1));
+    await expectThrow(token.transfer(accounts[1], 1));
+    await expectThrow(token.approve(accounts[0], 2));
+    await expectThrow(token.increaseApproval(accounts[0], 1));
+    await expectThrow(token.decreaseApproval(accounts[0], 1));
+  });
 });
