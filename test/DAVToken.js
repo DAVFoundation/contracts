@@ -19,8 +19,8 @@ contract('DAVToken', function(accounts) {
   it('should transfer from sender when calling transfer()', async function() {
     let token = await DAVToken.new();
     await token.transfer(accounts[1], totalSupplySetting);
-    let firstAccountBalance = (await token.balanceOf(accounts[0])).toNumber();
-    let secondAccountBalance = (await token.balanceOf(accounts[1])).toNumber();
+    let firstAccountBalance = await token.balanceOf(accounts[0]);
+    let secondAccountBalance = await token.balanceOf(accounts[1]);
     assert.equal(firstAccountBalance, 0);
     assert.equal(secondAccountBalance, totalSupplySetting);
   });
@@ -45,11 +45,11 @@ contract('DAVToken', function(accounts) {
 
   it('should return the correct allowance', async function() {
     let token = await DAVToken.new();
-    assert.equal((await token.allowance(accounts[0], accounts[0])).toNumber(), 0);
+    assert.equal(await token.allowance(accounts[0], accounts[0]), 0);
     await token.approve(accounts[0], 1);
-    assert.equal((await token.allowance(accounts[0], accounts[0])).toNumber(), 1);
+    assert.equal(await token.allowance(accounts[0], accounts[0]), 1);
     await token.transferFrom(accounts[0], accounts[1], 1);
-    assert.equal((await token.allowance(accounts[0], accounts[0])).toNumber(), 0);
+    assert.equal(await token.allowance(accounts[0], accounts[0]), 0);
   });
 
   it('should be pausable and unpausable by owner', async function() {
