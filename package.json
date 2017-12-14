@@ -14,9 +14,9 @@
     "test": "./node_modules/.bin/truffle test"
   },
   "dependencies": {
-    "zeppelin-solidity": "^1.3.0"
+    "zeppelin-solidity": "^1.4.0"
   },
   "devDependencies": {
-    "eslint": "^4.10.0"
+    "eslint": "^4.13.1"
   }
 }
