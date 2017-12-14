@@ -3,6 +3,7 @@
     "artifacts": false,
     "contract": false,
     "it": false,
+    "xit": false,
     "assert": false
   }
 }
