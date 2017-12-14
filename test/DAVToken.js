@@ -43,4 +43,13 @@ contract('DAVToken', function(accounts) {
     await expectThrow(token.transferFrom(accounts[0], accounts[1], 1));
   });
 
+  it('should return the correct allowance', async function() {
+    let token = await DAVToken.new();
+    assert.equal((await token.allowance(accounts[0], accounts[0])).toNumber(), 0);
+    await token.approve(accounts[0], 1);
+    assert.equal((await token.allowance(accounts[0], accounts[0])).toNumber(), 1);
+    await token.transferFrom(accounts[0], accounts[1], 1);
+    assert.equal((await token.allowance(accounts[0], accounts[0])).toNumber(), 0);
+  });
+
 });
