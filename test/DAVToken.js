@@ -1,4 +1,5 @@
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
+const expectThrow = require('./helpers/expectThrow');
 const totalSupplySetting = 100;
 
 contract('DAVToken', function(accounts) {
@@ -24,5 +25,9 @@ contract('DAVToken', function(accounts) {
     assert.equal(secondAccountBalance, totalSupplySetting);
   });
 
+  it('should throw an error when trying to transfer more than balance', async function() {
+    let token = await DAVToken.new();
+    await expectThrow(token.transfer(accounts[1], totalSupplySetting+1));
+  });
 
 });
