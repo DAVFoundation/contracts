@@ -1,12 +1,13 @@
 pragma solidity ^0.4.15;
 
 import 'zeppelin-solidity/contracts/token/StandardToken.sol';
+import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
 
 /**
  * @title DAV Token
  * @dev ERC20 token
  */
-contract DAVToken is StandardToken {
+contract DAVToken is StandardToken, Pausable {
 
   // Token constants
   // NOTE: These are placeholder values used during development. Final supply and precision to be determined later.
