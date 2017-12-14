@@ -52,4 +52,26 @@ contract('DAVToken', function(accounts) {
     assert.equal((await token.allowance(accounts[0], accounts[0])).toNumber(), 0);
   });
 
+  it('should be pausable and unpausable by owner', async function() {
+    let token = await DAVToken.new();
+    assert.equal(await token.paused(), false);
+    await token.pause();
+    assert.equal(await token.paused(), true);
+    await token.unpause();
+    assert.equal(await token.paused(), false);
+  });
+
+  it('should throw an error when trying to pause while paused', async function() {
+    let token = await DAVToken.new();
+    await token.pause();
+    await expectThrow(token.pause());
+    assert.equal(await token.paused(), true);
+  });
+
+  it('should throw an error when trying to unpause while not paused', async function() {
+    let token = await DAVToken.new();
+    await expectThrow(token.unpause());
+    assert.equal(await token.paused(), false);
+  });
+
 });
