@@ -1,4 +1,4 @@
-const DAVToken = artifacts.require('./DAVToken.sol');
+const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
 
 contract('DAVToken', function(/*accounts*/) {
 
