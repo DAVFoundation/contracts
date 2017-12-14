@@ -30,4 +30,17 @@ contract('DAVToken', function(accounts) {
     await expectThrow(token.transfer(accounts[1], totalSupplySetting+1));
   });
 
+  it('should throw an error when trying to transfer without approval', async function() {
+    let token = await DAVToken.new();
+    await expectThrow(token.transferFrom(accounts[1], accounts[0], 1));
+  });
+
+  it('should allow to transfer with transferFrom after approval but no more than approved amount', async function() {
+    let token = await DAVToken.new();
+    await token.approve(accounts[0], 2);
+    await token.transferFrom(accounts[0], accounts[1], 1);
+    await token.transferFrom(accounts[0], accounts[1], 1);
+    await expectThrow(token.transferFrom(accounts[0], accounts[1], 1));
+  });
+
 });
