@@ -20,7 +20,7 @@ contract DAVToken is StandardToken {
    * @dev DAVToken constructor
    * Runs once on initial contract creation. Sets total supply and balances.
    */
-  function DAVToken() {
+  function DAVToken() public {
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
   }

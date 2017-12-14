@@ -12,7 +12,7 @@ contract DAVTokenMock is DAVToken {
    * @dev DAVTokenMock constructor
    * Runs once on initial contract creation. Sets total supply and balances.
    */
-  function DAVTokenMock() {
+  function DAVTokenMock() public {
     totalSupply = 100;
     balances[msg.sender] = 100;
   }
