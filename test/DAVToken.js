@@ -93,4 +93,19 @@ contract('DAVToken', function(accounts) {
     await expectThrow(token.increaseApproval(accounts[0], 1));
     await expectThrow(token.decreaseApproval(accounts[0], 1));
   });
+
+  it('should allow increasing the allowance with increaseApproval', async function() {
+    let token = await DAVToken.new();
+    await token.increaseApproval(accounts[0], 1);
+    assert.equal(await token.allowance(accounts[0], accounts[0]), 1);
+  });
+
+  it('should allow decreasing the allowance with decreaseApproval', async function() {
+    let token = await DAVToken.new();
+    await token.approve(accounts[0], 5);
+    await token.decreaseApproval(accounts[0], 1);
+    assert.equal(await token.allowance(accounts[0], accounts[0]), 4);
+  });
+
+
 });
