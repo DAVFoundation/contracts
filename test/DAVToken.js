@@ -107,5 +107,9 @@ contract('DAVToken', function(accounts) {
     assert.equal(await token.allowance(accounts[0], accounts[0]), 4);
   });
 
+  xit('should throw an error if trying to decreaseApproval below 0');
+  xit('should throw an error if a non-owner tries to pause or unpause it');
+  xit('should allow transfer of ownership by the owner');
+  xit('should not allow transfer of ownership by a non-owner');
 
 });
