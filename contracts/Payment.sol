@@ -23,7 +23,7 @@ contract Payment is Ownable {
      * @dev The constructor takes DAV token address, identity contract address and subsidy wallet address and
      * initiate the Payment contract
      */
-    function Payment(address _tokenAddress, address _identityAddress, address _subsidyWallet) {
+    function Payment(address _tokenAddress, address _identityAddress, address _subsidyWallet)  public {
         tokenAddress = _tokenAddress;
         identityAddress = _identityAddress;
         subsidyWallet = _subsidyWallet;
