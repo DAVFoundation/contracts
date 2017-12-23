@@ -2,6 +2,7 @@ pragma solidity ^0.4.15;
 
 import '../DAVToken.sol';
 
+
 /**
  * @title DAV Token Mock
  * @dev ERC20 token

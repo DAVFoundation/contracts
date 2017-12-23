@@ -6,6 +6,7 @@ import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 import 'zeppelin-solidity/contracts/math/Math.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 
+
 contract Payment is Ownable {
   address private tokenAddress;
   address private identityAddress;

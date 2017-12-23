@@ -3,6 +3,7 @@ pragma solidity ^0.4.15;
 import './helpers/UUIDProvider.sol';
 import './DAVToken.sol';
 
+
 contract Identity {
   address private tokenAddress;
 
