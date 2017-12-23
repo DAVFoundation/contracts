@@ -1,5 +1,5 @@
 contract UUIDProvider {
-    function UUIDProvider() {
+    function UUIDProvider()  public {
         seen[0x0] = true;
         min_entropy = 32;
         addEntropy();
