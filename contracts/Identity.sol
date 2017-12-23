@@ -14,7 +14,7 @@ contract Identity {
         _;
     }
 
-    function Identity(address _tokenAddress) {
+    function Identity(address _tokenAddress)  public {
         tokenAddress = _tokenAddress;
     }
 
