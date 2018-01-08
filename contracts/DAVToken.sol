@@ -18,9 +18,8 @@ contract DAVToken is StandardToken, Pausable {
   uint8 public constant decimals = 18;
   uint256 public constant INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals)); // Number of tokens padded with 0s for number of decimal places
 
-
   /**
-   * @dev DAVToken constructor
+   * @notice DAVToken constructor
    * Runs once on initial contract creation. Sets total supply and balances.
    */
   function DAVToken() public {
@@ -29,7 +28,7 @@ contract DAVToken is StandardToken, Pausable {
   }
 
   /**
-  * @dev transfer token for a specified address
+  * @notice transfer token for a specified address
   * @param _to The address to transfer to.
   * @param _value The amount to be transferred.
   */
@@ -38,7 +37,7 @@ contract DAVToken is StandardToken, Pausable {
   }
 
   /**
-   * @dev Transfer tokens from one address to another
+   * @notice Transfer tokens from one address to another
    * @param _from address The address which you want to send tokens from
    * @param _to address The address which you want to transfer to
    * @param _value uint256 the amount of tokens to be transferred
@@ -48,7 +47,7 @@ contract DAVToken is StandardToken, Pausable {
   }
 
   /**
-   * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
+   * @notice Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
    *
    * Beware that changing an allowance with this method brings the risk that someone may use both the old
    * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
@@ -62,7 +61,7 @@ contract DAVToken is StandardToken, Pausable {
   }
 
   /**
-   * @dev Increase the amount of tokens that an owner allowed to a spender.
+   * @notice Increase the amount of tokens that an owner is allowed to a spender.
    *
    * approve should be called when allowed[_spender] == 0. To increment
    * allowed value is better to use this function to avoid 2 calls (and wait until
@@ -76,7 +75,7 @@ contract DAVToken is StandardToken, Pausable {
   }
 
   /**
-   * @dev Decrease the amount of tokens that an owner allowed to a spender.
+   * @notice Decrease the amount of tokens that an owner allowed to a spender.
    *
    * approve should be called when allowed[_spender] == 0. To decrement
    * allowed value is better to use this function to avoid 2 calls (and wait until
