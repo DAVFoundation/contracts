@@ -107,7 +107,13 @@ contract('DAVToken', function(accounts) {
     assert.equal(await token.allowance(accounts[0], accounts[0]), 4);
   });
 
-  xit('should throw an error if trying to decreaseApproval below 0');
+  it('should set approved amount to 0 if trying to decreaseApproval to below 0', async function() {
+    let token = await DAVToken.new();
+    await token.approve(accounts[0], 1);
+    await token.decreaseApproval(accounts[0], 2);
+    assert.equal(await token.allowance(accounts[0], accounts[0]), 0);
+  });
+
   xit('should throw an error if a non-owner tries to pause or unpause it');
   xit('should allow transfer of ownership by the owner');
   xit('should not allow transfer of ownership by a non-owner');
