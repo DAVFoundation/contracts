@@ -357,7 +357,7 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-debug@3.1.0, debug@^3.0.1:
+debug@3.1.0, debug@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   dependencies:
@@ -432,21 +432,25 @@ eslint-scope@^3.7.1:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint@^4.13.1:
-  version "4.13.1"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.13.1.tgz#0055e0014464c7eb7878caf549ef2941992b444f"
+eslint-visitor-keys@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
+
+eslint@^4.15.0:
+  version "4.15.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.15.0.tgz#89ab38c12713eec3d13afac14e4a89e75ef08145"
   dependencies:
     ajv "^5.3.0"
     babel-code-frame "^6.22.0"
     chalk "^2.1.0"
     concat-stream "^1.6.0"
     cross-spawn "^5.1.0"
-    debug "^3.0.1"
+    debug "^3.1.0"
     doctrine "^2.0.2"
     eslint-scope "^3.7.1"
+    eslint-visitor-keys "^1.0.0"
     espree "^3.5.2"
     esquery "^1.0.0"
-    estraverse "^4.2.0"
     esutils "^2.0.2"
     file-entry-cache "^2.0.0"
     functional-red-black-tree "^1.0.1"
@@ -498,7 +502,7 @@ esrecurse@^4.1.0:
     estraverse "^4.1.0"
     object-assign "^4.0.1"
 
-estraverse@^4.0.0, estraverse@^4.1.0, estraverse@^4.1.1, estraverse@^4.2.0:
+estraverse@^4.0.0, estraverse@^4.1.0, estraverse@^4.1.1:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/estraverse/-/estraverse-4.2.0.tgz#0dee3fed31fcd469618ce7342099fc1afa0bdb13"
 
@@ -1520,13 +1524,13 @@ sol-explore@1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/sol-explore/-/sol-explore-1.6.1.tgz#b59f073c69fe332560d5a10c32ba8ca7f2986cfb"
 
-solium-plugin-security@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/solium-plugin-security/-/solium-plugin-security-0.0.2.tgz#2e1d690c2d260713b61bbc4194efea2306abd940"
+solium-plugin-security@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/solium-plugin-security/-/solium-plugin-security-0.1.1.tgz#2a87bcf8f8c3abf7d198e292e4ac080284e3f3f6"
 
-solium@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/solium/-/solium-1.1.0.tgz#94116c68739fadb811d72c7ed48cd7cd7e8f1262"
+solium@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/solium/-/solium-1.1.2.tgz#0e6d95d17ddd412e415573a72e53137357dba2f8"
   dependencies:
     ajv "^5.2.2"
     chokidar "^1.6.0"
@@ -1536,13 +1540,13 @@ solium@^1.1.0:
     lodash "^4.14.2"
     sol-digger "0.0.2"
     sol-explore "1.6.1"
-    solium-plugin-security "0.0.2"
-    solparse "2.2.0"
+    solium-plugin-security "0.1.1"
+    solparse "2.2.2"
     text-table "^0.2.0"
 
-solparse@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/solparse/-/solparse-2.2.0.tgz#4336ac85ed87679eb5e449e657cc4b523db01a48"
+solparse@2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/solparse/-/solparse-2.2.2.tgz#2e0f6684a7efffabe561ec51ebd91663823d3e40"
   dependencies:
     mocha "^4.0.1"
     pegjs "^0.10.0"

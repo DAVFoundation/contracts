@@ -11,14 +11,14 @@
   },
   "scripts": {
     "build": "./node_modules/.bin/truffle compile",
-    "test": "./node_modules/.bin/truffle test",
-    "lint": "./node_modules/.bin/solium --dir ./contracts"
+    "lint": "./node_modules/.bin/solium --dir ./contracts",
+    "test": "./node_modules/.bin/truffle test"
   },
   "dependencies": {
-    "solium": "^1.1.0",
+    "solium": "^1.1.2",
     "zeppelin-solidity": "^1.4.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1"
+    "eslint": "^4.15.0"
   }
 }
