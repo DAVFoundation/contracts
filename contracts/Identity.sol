@@ -11,7 +11,7 @@ contract Identity {
     address wallet;
   }
 
-  mapping (address => DAVIdentity) private identities;
+  mapping (string => DAVIdentity) private identities;
 
   function parseAddr(string _address) internal pure returns (address) {
     bytes memory a = bytes(_address);
@@ -41,14 +41,15 @@ contract Identity {
 
     // Make sure id isn't registered already
     require(
-      identities[identityAddress].wallet == 0x0
+      identities[_id].wallet == 0x0
     );
 
     // Register in identities mapping
-    identities[identityAddress] = DAVIdentity({
+    identities[_id] = DAVIdentity({
       wallet: _wallet
     });
 
     return true;
   }
+
 }
