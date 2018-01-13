@@ -24,4 +24,12 @@ contract('Identity', function() {
     );
   });
 
+  it('should throw when attempting to register an existing id', async function() {
+    const IdentityContract = await Identity.new();
+    IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+    await expectThrow(
+      IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s)
+    );
+  });
+
 });

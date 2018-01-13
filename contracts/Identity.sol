@@ -7,7 +7,13 @@ pragma solidity ^0.4.15;
  */
 contract Identity {
 
-  function parseAddr(string _address) internal pure returns (address){
+  struct DAVIdentity {
+    address wallet;
+  }
+
+  mapping (address => DAVIdentity) private identities;
+
+  function parseAddr(string _address) internal pure returns (address) {
     bytes memory a = bytes(_address);
     uint160 iaddr = 0;
     uint160 b1;
@@ -25,10 +31,23 @@ contract Identity {
     return address(iaddr);
   }
 
-  function register(string _id, uint8 _v, bytes32 _r, bytes32 _s) public pure returns (bool) {
+  function register(string _id, uint8 _v, bytes32 _r, bytes32 _s) public returns (bool) {
+    address identityAddress = parseAddr(_id);
+    // Verify signature
     require(
-      ecrecover(keccak256(_id), _v, _r, _s) == parseAddr(_id)
+      ecrecover(keccak256(_id), _v, _r, _s) == identityAddress
     );
+
+    // Make sure id isn't registered already
+    require(
+      identities[identityAddress].wallet == 0x0
+    );
+
+    // Register in identities mapping
+    identities[identityAddress] = DAVIdentity({
+      wallet: msg.sender
+    });
+
     return true;
   }
 }
