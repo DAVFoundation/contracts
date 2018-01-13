@@ -10,25 +10,26 @@ const sampleIdentity = {
 };
 
 
-contract('Identity', function() {
+contract('Identity', function(accounts) {
+  const walletAddress = accounts[0];
 
   it('should not throw when attempting to register with a valid signature', async function() {
     const IdentityContract = await Identity.new();
-    IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+    IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
   });
 
   it('should throw when attempting to register with an invalid signature', async function() {
     const IdentityContract = await Identity.new();
     await expectThrow(
-      IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.invalidR, sampleIdentity.s)
+      IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.invalidR, sampleIdentity.s)
     );
   });
 
   it('should throw when attempting to register an existing id', async function() {
     const IdentityContract = await Identity.new();
-    IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+    IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
     await expectThrow(
-      IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s)
+      IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s)
     );
   });
 

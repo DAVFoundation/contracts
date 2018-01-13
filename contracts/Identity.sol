@@ -31,8 +31,9 @@ contract Identity {
     return address(iaddr);
   }
 
-  function register(string _id, uint8 _v, bytes32 _r, bytes32 _s) public returns (bool) {
+  function register(string _id, address _wallet, uint8 _v, bytes32 _r, bytes32 _s) public returns (bool) {
     address identityAddress = parseAddr(_id);
+
     // Verify signature
     require(
       ecrecover(keccak256(_id), _v, _r, _s) == identityAddress
@@ -45,7 +46,7 @@ contract Identity {
 
     // Register in identities mapping
     identities[identityAddress] = DAVIdentity({
-      wallet: msg.sender
+      wallet: _wallet
     });
 
     return true;
