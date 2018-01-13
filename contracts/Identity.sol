@@ -25,9 +25,9 @@ contract Identity {
     return address(iaddr);
   }
 
-  function create(string _public_key, uint8 v, bytes32 r, bytes32 s) public pure returns (bool) {
+  function register(string _address, uint8 v, bytes32 r, bytes32 s) public pure returns (bool) {
     require(
-      ecrecover(keccak256(_public_key), v, r, s) == parseAddr(_public_key)
+      ecrecover(keccak256(_address), v, r, s) == parseAddr(_address)
     );
     return true;
   }

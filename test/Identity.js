@@ -12,15 +12,15 @@ const sampleIdentity = {
 
 contract('Identity', function() {
 
-  it('should not throw when attempting to create with a valid signature', async function() {
+  it('should not throw when attempting to register with a valid signature', async function() {
     const IdentityContract = await Identity.new();
-    IdentityContract.create(sampleIdentity.address, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+    IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
   });
 
-  it('should throw when attempting to create with an invalid signature', async function() {
+  it('should throw when attempting to register with an invalid signature', async function() {
     const IdentityContract = await Identity.new();
     await expectThrow(
-      IdentityContract.create(sampleIdentity.address, sampleIdentity.v, sampleIdentity.invalidR, sampleIdentity.s)
+      IdentityContract.register(sampleIdentity.address, sampleIdentity.v, sampleIdentity.invalidR, sampleIdentity.s)
     );
   });
 
