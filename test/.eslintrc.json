@@ -5,6 +5,7 @@
     "it": false,
     "xit": false,
     "beforeEach": false,
+    "describe": false,
     "assert": false
   }
 }
