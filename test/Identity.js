@@ -1,4 +1,5 @@
 const Identity = artifacts.require('./Identity.sol');
+const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
 const expectThrow = require('./helpers/expectThrow');
 
 const sampleIdentity = {
@@ -9,8 +10,9 @@ const sampleIdentity = {
   invalidR: '0x092851aac67ddb02c0bd976142f66c937d920fee4dbb305890452b67abb1b9b0',
 };
 
-const deployContracts = () => {
-  return Identity.new();
+const deployContracts = async () => {
+  const token = await DAVToken.new();
+  return Identity.new(token.address);
 };
 
 contract('Identity', function(accounts) {

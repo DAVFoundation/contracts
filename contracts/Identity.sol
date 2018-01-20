@@ -13,6 +13,17 @@ contract Identity {
 
   mapping (string => DAVIdentity) private identities;
 
+  address private DAVTokenContract;
+
+  /**
+   * @dev Constructor
+   *
+   * @param _davTokenContract address of the DAVToken contract
+   */
+  function Identity(address _davTokenContract) public {
+    DAVTokenContract = _davTokenContract;
+  }
+
   function parseAddr(string _address) internal pure returns (address) {
     bytes memory a = bytes(_address);
     uint160 iaddr = 0;
