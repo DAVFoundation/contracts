@@ -4,6 +4,7 @@
     "contract": false,
     "it": false,
     "xit": false,
+    "beforeEach": false,
     "assert": false
   }
 }
