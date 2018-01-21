@@ -1,5 +1,6 @@
 pragma solidity ^0.4.15;
 
+import './DAVToken.sol';
 
 /**
  * @title DAV Token
@@ -13,15 +14,15 @@ contract Identity {
 
   mapping (string => DAVIdentity) private identities;
 
-  address private DAVTokenContract;
+  DAVToken private token;
 
   /**
    * @dev Constructor
    *
    * @param _davTokenContract address of the DAVToken contract
    */
-  function Identity(address _davTokenContract) public {
-    DAVTokenContract = _davTokenContract;
+  function Identity(DAVToken _davTokenContract) public {
+    token = _davTokenContract;
   }
 
   function parseAddr(string _address) internal pure returns (address) {
