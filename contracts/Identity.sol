@@ -64,4 +64,8 @@ contract Identity {
     return true;
   }
 
+  function getBalance(string _id) public view returns (uint256 balance) {
+    return token.balanceOf(identities[_id].wallet);
+  }
+
 }

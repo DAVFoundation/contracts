@@ -42,4 +42,16 @@ contract('Identity', function(accounts) {
     });
   });
 
+  describe('getBalance', () => {
+
+    beforeEach(async function() {
+      IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+    });
+
+    it('should return the correct DAV balance of an identity\'s wallet when given an identity address', async function () {
+      assert.equal(await IdentityContract.getBalance(sampleIdentity.address), 100);
+    });
+
+  });
+
 });
