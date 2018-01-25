@@ -15,6 +15,9 @@ const deployContracts = async () => {
   return Identity.new(token.address);
 };
 
+const registerIdentity = (contract, walletAddress, address = sampleIdentity.address, v = sampleIdentity.v, r = sampleIdentity.r, s = sampleIdentity.s) =>
+  contract.register(address, walletAddress, v, r, s);
+
 contract('Identity', function(accounts) {
   const walletAddress = accounts[0];
   let IdentityContract;
@@ -25,19 +28,19 @@ contract('Identity', function(accounts) {
 
   describe('register', () => {
     it('should not throw when attempting to register with a valid signature', async function () {
-      IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+      registerIdentity(IdentityContract, walletAddress);
     });
 
     it('should throw when attempting to register with an invalid signature', async function () {
       await expectThrow(
-        IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.invalidR, sampleIdentity.s)
+        registerIdentity(IdentityContract, walletAddress, '0x17325a469aef3472aa58dfdcf672881d79b31d57')
       );
     });
 
     it('should throw when attempting to register an existing id', async function () {
-      IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+      registerIdentity(IdentityContract, walletAddress);
       await expectThrow(
-        IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s)
+        registerIdentity(IdentityContract, walletAddress)
       );
     });
   });
@@ -45,7 +48,7 @@ contract('Identity', function(accounts) {
   describe('getBalance', () => {
 
     beforeEach(async function() {
-      IdentityContract.register(sampleIdentity.address, walletAddress, sampleIdentity.v, sampleIdentity.r, sampleIdentity.s);
+      registerIdentity(IdentityContract, walletAddress);
     });
 
     it('should return the correct DAV balance of an identity\'s wallet when given an identity address', async function () {
