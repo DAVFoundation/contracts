@@ -31,11 +31,17 @@ contract('Identity', function(accounts) {
       registerIdentity(IdentityContract, walletAddress);
     });
 
-    it('should throw when attempting to register with an invalid signature', async function () {
+    it('should throw when attempting to register with an invalid address', async function () {
       await expectThrow(
         registerIdentity(IdentityContract, walletAddress, '0x17325a469aef3472aa58dfdcf672881d79b31d57')
       );
     });
+
+    xit('should throw when attempting to register with an invalid signature.v');
+
+    xit('should throw when attempting to register with an invalid signature.r');
+
+    xit('should throw when attempting to register with an invalid signature.s');
 
     it('should throw when attempting to register an existing id', async function () {
       registerIdentity(IdentityContract, walletAddress);
