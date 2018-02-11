@@ -23,7 +23,7 @@ contract DAVToken is StandardToken, Pausable {
    * Runs once on initial contract creation. Sets total supply and balances.
    */
   function DAVToken() public {
-    totalSupply = INITIAL_SUPPLY;
+    totalSupply_ = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
   }
 
