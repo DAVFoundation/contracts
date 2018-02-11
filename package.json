@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "solium": "^1.1.3",
-    "zeppelin-solidity": "^1.5.0"
+    "zeppelin-solidity": "^1.6.0"
   },
   "devDependencies": {
     "eslint": "^4.17.0"
