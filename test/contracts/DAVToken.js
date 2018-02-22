@@ -1,5 +1,5 @@
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
-const expectThrow = require('./helpers/expectThrow');
+const expectThrow = require('../helpers/expectThrow');
 const totalSupplySetting = 100;
 
 contract('DAVToken', function(accounts) {

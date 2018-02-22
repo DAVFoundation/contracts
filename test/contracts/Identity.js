@@ -1,6 +1,6 @@
 const Identity = artifacts.require('./Identity.sol');
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
-const expectThrow = require('./helpers/expectThrow');
+const expectThrow = require('../helpers/expectThrow');
 
 const sampleIdentity = {
   address: '0x17325a469aef3472aa58dfdcf672881d79b31d58',
