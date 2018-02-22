@@ -3,8 +3,7 @@ pragma solidity ^0.4.15;
 import './DAVToken.sol';
 
 /**
- * @title DAV Token
- * @dev ERC20 token
+ * @title Identity
  */
 contract Identity {
 
