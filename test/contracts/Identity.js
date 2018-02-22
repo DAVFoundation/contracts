@@ -21,7 +21,7 @@ contract('Identity', function(accounts) {
       registerIdentity(IdentityContract, walletAddress);
     });
 
-    it('should throw when attempting to register with an invalid address', async function() {
+    it('should throw when attempting to register with an invalid DAV id', async function() {
       await expectThrow(
         registerIdentity(
           IdentityContract,
@@ -37,7 +37,7 @@ contract('Identity', function(accounts) {
 
     xit('should throw when attempting to register with an invalid signature.s');
 
-    it('should throw when attempting to register an existing id', async function() {
+    it('should throw when attempting to register an existing DAV id', async function() {
       registerIdentity(IdentityContract, walletAddress);
       await expectThrow(registerIdentity(IdentityContract, walletAddress));
     });
@@ -48,9 +48,9 @@ contract('Identity', function(accounts) {
       registerIdentity(IdentityContract, walletAddress);
     });
 
-    it("should return the correct DAV balance of an identity's wallet when given an identity address", async function() {
+    it('should return the correct DAV balance of an identity\'s wallet when given a DAV id', async function() {
       assert.equal(
-        await IdentityContract.getBalance(sampleIdentities[0].address),
+        await IdentityContract.getBalance(sampleIdentities[0].id),
         100,
       );
     });
