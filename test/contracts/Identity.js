@@ -4,8 +4,8 @@ const expectThrow = require('../helpers/expectThrow');
 const { registerIdentity, sampleIdentities } = require('../helpers/identity');
 
 const deployContracts = async () => {
-  const token = await DAVToken.new();
-  return Identity.new(token.address);
+  const TokenContract = await DAVToken.new();
+  return Identity.new(TokenContract.address);
 };
 
 contract('Identity', function(accounts) {
