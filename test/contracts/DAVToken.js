@@ -3,7 +3,6 @@ const expectThrow = require('../helpers/expectThrow');
 const totalSupplySetting = 100;
 
 contract('DAVToken', function(accounts) {
-
   it('should return the correct totalSupply after construction', async function() {
     let token = await DAVToken.new();
     let totalSupply = await token.totalSupply();
@@ -27,7 +26,7 @@ contract('DAVToken', function(accounts) {
 
   it('should throw an error when trying to transfer more than balance', async function() {
     let token = await DAVToken.new();
-    await expectThrow(token.transfer(accounts[1], totalSupplySetting+1));
+    await expectThrow(token.transfer(accounts[1], totalSupplySetting + 1));
   });
 
   it('should throw an error when trying to transfer without approval', async function() {
@@ -117,5 +116,4 @@ contract('DAVToken', function(accounts) {
   xit('should throw an error if a non-owner tries to pause or unpause it');
   xit('should allow transfer of ownership by the owner');
   xit('should not allow transfer of ownership by a non-owner');
-
 });

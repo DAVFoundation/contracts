@@ -8,7 +8,6 @@ const deployContracts = async () => {
   return Identity.new(token.address);
 };
 
-
 contract('Identity', function(accounts) {
   const walletAddress = accounts[0];
   let IdentityContract;
@@ -18,13 +17,17 @@ contract('Identity', function(accounts) {
   });
 
   describe('register', () => {
-    it('should not throw when attempting to register with a valid signature', async function () {
+    it('should not throw when attempting to register with a valid signature', async function() {
       registerIdentity(IdentityContract, walletAddress);
     });
 
-    it('should throw when attempting to register with an invalid address', async function () {
+    it('should throw when attempting to register with an invalid address', async function() {
       await expectThrow(
-        registerIdentity(IdentityContract, walletAddress, '0x17325a469aef3472aa58dfdcf672881d79b31d57')
+        registerIdentity(
+          IdentityContract,
+          walletAddress,
+          '0x17325a469aef3472aa58dfdcf672881d79b31d57',
+        ),
       );
     });
 
@@ -34,24 +37,22 @@ contract('Identity', function(accounts) {
 
     xit('should throw when attempting to register with an invalid signature.s');
 
-    it('should throw when attempting to register an existing id', async function () {
+    it('should throw when attempting to register an existing id', async function() {
       registerIdentity(IdentityContract, walletAddress);
-      await expectThrow(
-        registerIdentity(IdentityContract, walletAddress)
-      );
+      await expectThrow(registerIdentity(IdentityContract, walletAddress));
     });
   });
 
   describe('getBalance', () => {
-
     beforeEach(async function() {
       registerIdentity(IdentityContract, walletAddress);
     });
 
-    it('should return the correct DAV balance of an identity\'s wallet when given an identity address', async function () {
-      assert.equal(await IdentityContract.getBalance(sampleIdentities[0].address), 100);
+    it("should return the correct DAV balance of an identity's wallet when given an identity address", async function() {
+      assert.equal(
+        await IdentityContract.getBalance(sampleIdentities[0].address),
+        100,
+      );
     });
-
   });
-
 });
