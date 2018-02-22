@@ -7,6 +7,12 @@ const sampleIdentities = [
     invalidR:
       '0x092851aac67ddb02c0bd976142f66c937d920fee4dbb305890452b67abb1b9b0',
   },
+  {
+    address: '0xd589a93099eeb68ab5670de6940cacc3f7d9ebb3',
+    v: 27,
+    r: '0xa796e229bce021038f991df21e39a50cc180cd560b9dba4e41c6d39d4359946e',
+    s: '0x37922479ad13bc4c41401919eb28c6ed40531d3a971078fd94f1fa9aa540c14b',
+  },
 ];
 
 const registerIdentity = (
