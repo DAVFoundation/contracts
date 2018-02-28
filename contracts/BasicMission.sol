@@ -1,6 +1,7 @@
 pragma solidity ^0.4.15;
 
 import './Identity.sol';
+import './DAVToken.sol';
 
 
 /**
@@ -32,15 +33,22 @@ contract BasicMission {
     string buyerId
   );
 
+  event Signed(
+    bytes32 id
+  );
+
+  DAVToken private token;
   Identity private identity;
 
   /**
    * @dev Constructor
    *
    * @param _identityContract address of the Identity contract
+   * @param _davTokenContract address of the DAVToken contract
    */
-  function BasicMission(Identity _identityContract) public {
+  function BasicMission(Identity _identityContract, DAVToken _davTokenContract) public {
     identity = _identityContract;
+    token = _davTokenContract;
   }
 
   /**
@@ -67,6 +75,35 @@ contract BasicMission {
 
     // Event
     Create(missionId, _sellerId, _buyerId);
+  }
+
+  /**
+  * @notice Fund a mission
+  * @param _missionId The id of the mission
+  * @param _buyerId The DAV Identity of the person ordering the service
+  */
+  function fund(bytes32 _missionId, string _buyerId) public {
+    // Verify that message sender controls the seller's wallet
+    require(
+      identity.verifyOwnership(_buyerId, msg.sender)
+    );
+
+    // Verify buyer's balance is sufficient
+    require(
+      identity.getBalance(_buyerId) >= missions[_missionId].cost
+    );
+
+    // Transfer tokens to the mission contract
+    token.transferFrom(msg.sender, this, missions[_missionId].cost);
+
+    // Update mission balance
+    missions[_missionId].balance = missions[_missionId].cost;
+
+    // designate mission as signed
+    missions[_missionId].isSigned = true;
+
+    // Event
+    Signed(_missionId);
   }
 
 }
