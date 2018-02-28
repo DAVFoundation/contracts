@@ -65,4 +65,8 @@ contract Identity {
     return token.balanceOf(identities[_id].wallet);
   }
 
+  function verifyOwnership(string _id, address _wallet) public view returns (bool verified) {
+    return identities[_id].wallet == _wallet;
+  }
+
 }

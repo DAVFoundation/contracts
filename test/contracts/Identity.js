@@ -55,4 +55,30 @@ contract('Identity', function(accounts) {
       );
     });
   });
+
+  describe('verifyOwnership', () => {
+    beforeEach(async function() {
+      registerIdentity(IdentityContract, walletAddress);
+    });
+
+    it('should return true when identity and wallet match', async function() {
+      assert.isTrue(
+        await IdentityContract.verifyOwnership(sampleIdentities[0].id, accounts[0])
+      );
+    });
+
+    it('should return false when identity and wallet do not match', async function() {
+      assert.isNotTrue(
+        await IdentityContract.verifyOwnership(sampleIdentities[0].id, accounts[1])
+      );
+    });
+
+    it('should return false when identity given is not registered', async function() {
+      assert.isNotTrue(
+        await IdentityContract.verifyOwnership(sampleIdentities[1].id, accounts[1])
+      );
+    });
+
+  });
+
 });
