@@ -120,5 +120,7 @@ contract('BasicMission', function(accounts) {
         }),
       );
     });
+
+    xit('should fail if cost is negative');
   });
 });
