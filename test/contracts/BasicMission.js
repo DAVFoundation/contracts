@@ -35,7 +35,11 @@ contract('BasicMission', function(accounts) {
   };
 
   beforeEach(async function() {
-    ({ TokenContract, IdentityContract, BasicMissionContract } = await deployContracts());
+    ({
+      TokenContract,
+      IdentityContract,
+      BasicMissionContract,
+    } = await deployContracts());
     createEventContract = BasicMissionContract.Create();
     // Create Identity for User
     registerIdentity(
@@ -98,7 +102,9 @@ contract('BasicMission', function(accounts) {
 
   describe('create', () => {
     it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
-      await BasicMissionContract.create(vehicle.id, user.id, 4, {from: vehicle.wallet})
+      await BasicMissionContract.create(vehicle.id, user.id, 4, {
+        from: vehicle.wallet,
+      })
         .then(() => createEventContract.get())
         .then(events => {
           assert.equal(events.length, 1);
@@ -111,10 +117,10 @@ contract('BasicMission', function(accounts) {
 
     it('should throw if account creating the mission does not control the identity', async () => {
       await expectThrow(
-        BasicMissionContract.create(vehicle.id, user.id, 4, {from: user.wallet})
+        BasicMissionContract.create(vehicle.id, user.id, 4, {
+          from: user.wallet,
+        }),
       );
     });
-
   });
-
 });
