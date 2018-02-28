@@ -4,6 +4,6 @@ var BasicMission = artifacts.require('./BasicMission.sol');
 
 module.exports = async (deployer) => {
   await deployer.deploy(DAVToken);
-  deployer.deploy(Identity, DAVToken.address);
-  deployer.deploy(BasicMission);
+  await deployer.deploy(Identity, DAVToken.address);
+  deployer.deploy(BasicMission, Identity.address);
 };

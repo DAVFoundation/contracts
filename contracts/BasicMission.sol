@@ -1,6 +1,6 @@
 pragma solidity ^0.4.15;
 
-import './DAVToken.sol';
+import './Identity.sol';
 
 
 /**
@@ -31,6 +31,17 @@ contract BasicMission {
     string sellerId,
     string buyerId
   );
+
+  Identity private identity;
+
+  /**
+   * @dev Constructor
+   *
+   * @param _identityContract address of the Identity contract
+   */
+  function BasicMission(Identity _identityContract) public {
+    identity = _identityContract;
+  }
 
   /**
   * @notice Create a new mission
