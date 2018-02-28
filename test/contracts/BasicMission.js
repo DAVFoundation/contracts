@@ -3,11 +3,12 @@ const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
 const BasicMission = artifacts.require('./BasicMission.sol');
 
 const { registerIdentity, sampleIdentities } = require('../helpers/identity');
+const expectThrow = require('../helpers/expectThrow');
 
 const deployContracts = async () => {
   const TokenContract = await DAVToken.new();
   const IdentityContract = await Identity.new(TokenContract.address);
-  const BasicMissionContract = await BasicMission.new();
+  const BasicMissionContract = await BasicMission.new(IdentityContract.address);
   return { TokenContract, IdentityContract, BasicMissionContract };
 };
 
@@ -34,14 +35,6 @@ contract('BasicMission', function(accounts) {
 
   beforeEach(async function() {
     ({ TokenContract, IdentityContract, BasicMissionContract } = await deployContracts());
-  });
-
-  it('should complete successfully when everything is in order', async function() {
-    const userAirdropAmount = 10;
-    // const missionCost = 4;
-    let userTokenBalance;
-    // let vehicleTokenBalance;
-
     // Create Identity for User
     registerIdentity(
       IdentityContract,
@@ -61,6 +54,13 @@ contract('BasicMission', function(accounts) {
       vehicle.r,
       vehicle.s,
     );
+  });
+
+  it('should complete successfully when everything is in order', async function() {
+    const userAirdropAmount = 10;
+    // const missionCost = 4;
+    let userTokenBalance;
+    // let vehicleTokenBalance;
 
     // Airdrop some money to User for testing
     userTokenBalance = await IdentityContract.getBalance(user.id);
@@ -97,7 +97,7 @@ contract('BasicMission', function(accounts) {
   describe('create', () => {
     it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
       const createEventContract = BasicMissionContract.Create();
-      await BasicMissionContract.create(vehicle.id, user.id, 4)
+      await BasicMissionContract.create(vehicle.id, user.id, 4, {from: accounts[2]})
         .then(() => createEventContract.get())
         .then(events => {
           assert.equal(events.length, 1);
@@ -108,7 +108,12 @@ contract('BasicMission', function(accounts) {
         });
     });
 
-    xit('should throw if account creating the mission does not control the identity');
+    it('should throw if account creating the mission does not control the identity', async () => {
+      await expectThrow(
+        BasicMissionContract.create(vehicle.id, user.id, 4, {from: accounts[1]})
+      );
+    });
+
   });
 
 });

@@ -50,7 +50,10 @@ contract BasicMission {
   * @param _cost The total cost of the mission to be paid by buyer
   */
   function create(string _sellerId, string _buyerId, uint256 _cost) public {
-    // @TODO: Verify that sender controls the seller's wallet
+    // Verify that message sender controls the seller's wallet
+    require(
+      identity.verifyOwnership(_sellerId, msg.sender)
+    );
 
     // Create mission
     bytes32 missionId = keccak256('BasicMission', block.number, _sellerId, _buyerId, nonce++);
