@@ -104,15 +104,13 @@ contract('BasicMission', function(accounts) {
     it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
       await BasicMissionContract.create(vehicle.id, user.id, 4, {
         from: vehicle.wallet,
-      })
-        .then(() => createEventContract.get())
-        .then(events => {
-          assert.equal(events.length, 1);
-          assert.typeOf(events[0].args.id, 'string');
-          assert.match(events[0].args.id, /^0x.{64}$/);
-          assert.equal(events[0].args.sellerId, vehicle.id);
-          assert.equal(events[0].args.buyerId, user.id);
-        });
+      });
+      const events = await createEventContract.get();
+      assert.equal(events.length, 1);
+      assert.typeOf(events[0].args.id, 'string');
+      assert.match(events[0].args.id, /^0x.{64}$/);
+      assert.equal(events[0].args.sellerId, vehicle.id);
+      assert.equal(events[0].args.buyerId, user.id);
     });
 
     it('should throw if account creating the mission does not control the identity', async () => {
