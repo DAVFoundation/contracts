@@ -16,6 +16,7 @@ contract('BasicMission', function(accounts) {
   let TokenContract;
   let IdentityContract;
   let BasicMissionContract;
+  let createEventContract;
 
   const user = {
     wallet: accounts[1],
@@ -35,6 +36,7 @@ contract('BasicMission', function(accounts) {
 
   beforeEach(async function() {
     ({ TokenContract, IdentityContract, BasicMissionContract } = await deployContracts());
+    createEventContract = BasicMissionContract.Create();
     // Create Identity for User
     registerIdentity(
       IdentityContract,
@@ -96,7 +98,6 @@ contract('BasicMission', function(accounts) {
 
   describe('create', () => {
     it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
-      const createEventContract = BasicMissionContract.Create();
       await BasicMissionContract.create(vehicle.id, user.id, 4, {from: vehicle.wallet})
         .then(() => createEventContract.get())
         .then(events => {
