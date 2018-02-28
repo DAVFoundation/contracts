@@ -68,7 +68,7 @@ contract('BasicMission', function(accounts) {
 
   it('should complete successfully when everything is in order', async function() {
     const userAirdropAmount = 10;
-    // const missionCost = 4;
+    const missionCost = 4;
     let userTokenBalance;
     // let vehicleTokenBalance;
 
@@ -82,15 +82,19 @@ contract('BasicMission', function(accounts) {
     // Vehicles creates new basic mission
     await BasicMissionContract.create(vehicle.id, user.id, 4, {from: vehicle.wallet});
 
-    // Event received
+    // Event received (Create)
     const missionId = (await createEvent.get())[0].args.id;
 
     // User funds basic mission
+    await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
+    await BasicMissionContract.fund(missionId, user.id, {from: user.wallet});
+    userTokenBalance = await IdentityContract.getBalance(user.id);
+    assert.equal(userTokenBalance, userAirdropAmount-missionCost);
 
-    // userTokenBalance = await IdentityContract.getBalance(user.id);
-    // assert.equal(userTokenBalance, userAirdropAmount-missionCost);
-
-    // Event received
+    // Event received (Signed)
+    const events = await signedEvent.get();
+    assert.equal(events.length, 1);
+    assert.equal(events[0].args.id, missionId);
 
     // Vehicle agrees to resolve mission
 
