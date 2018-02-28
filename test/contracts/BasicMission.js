@@ -95,9 +95,9 @@ contract('BasicMission', function(accounts) {
   });
 
   describe('create', () => {
-    it('should fire a Create event with the mission id, seller id, and buyer id', () => {
+    it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
       const createEventContract = BasicMissionContract.Create();
-      BasicMissionContract.create(vehicle.id, user.id, 4)
+      await BasicMissionContract.create(vehicle.id, user.id, 4)
         .then(() => createEventContract.get())
         .then(events => {
           assert.equal(events.length, 1);
