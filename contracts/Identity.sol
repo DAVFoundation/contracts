@@ -42,7 +42,7 @@ contract Identity {
     return address(iaddr);
   }
 
-  function register(string _id, address _wallet, uint8 _v, bytes32 _r, bytes32 _s) public returns (bool) {
+  function register(string _id, address _wallet, uint8 _v, bytes32 _r, bytes32 _s) public {
     address identityAddress = parseAddr(_id);
 
     // Verify signature
@@ -59,8 +59,6 @@ contract Identity {
     identities[_id] = DAVIdentity({
       wallet: _wallet
     });
-
-    return true;
   }
 
   function getBalance(string _id) public view returns (uint256 balance) {
