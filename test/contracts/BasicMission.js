@@ -97,7 +97,7 @@ contract('BasicMission', function(accounts) {
   describe('create', () => {
     it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
       const createEventContract = BasicMissionContract.Create();
-      await BasicMissionContract.create(vehicle.id, user.id, 4, {from: accounts[2]})
+      await BasicMissionContract.create(vehicle.id, user.id, 4, {from: vehicle.wallet})
         .then(() => createEventContract.get())
         .then(events => {
           assert.equal(events.length, 1);
@@ -110,7 +110,7 @@ contract('BasicMission', function(accounts) {
 
     it('should throw if account creating the mission does not control the identity', async () => {
       await expectThrow(
-        BasicMissionContract.create(vehicle.id, user.id, 4, {from: accounts[1]})
+        BasicMissionContract.create(vehicle.id, user.id, 4, {from: user.wallet})
       );
     });
 
