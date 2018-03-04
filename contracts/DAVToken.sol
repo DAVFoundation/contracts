@@ -1,6 +1,5 @@
 pragma solidity ^0.4.18;
 
-// solium-disable uppercase
 import 'zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
 import 'zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
 import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
