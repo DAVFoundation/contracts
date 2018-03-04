@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
 // solium-disable uppercase
 import 'zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
