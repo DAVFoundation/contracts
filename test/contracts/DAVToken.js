@@ -113,7 +113,19 @@ contract('DAVToken', function(accounts) {
     assert.equal(await token.allowance(accounts[0], accounts[0]), 0);
   });
 
-  xit('should throw an error if a non-owner tries to pause or unpause it');
+  it('should throw an error if a non-owner tries to pause', async () => {
+    let token = await DAVToken.new();
+    await expectThrow(token.pause({from: accounts[1]}));
+    assert.equal(await token.paused(), false);
+  });
+
+  it('should throw an error if a non-owner tries to unpause', async () => {
+    let token = await DAVToken.new();
+    await token.pause();
+    await expectThrow(token.unpause({from: accounts[1]}));
+    assert.equal(await token.paused(), true);
+  });
+
   xit('should allow transfer of ownership by the owner');
   xit('should not allow transfer of ownership by a non-owner');
   xit('should allow a token holder to burn their own tokens');
