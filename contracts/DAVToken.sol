@@ -13,7 +13,7 @@ import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
 contract DAVToken is MintableToken, BurnableToken, Pausable {
 
   // Token constants
-  // NOTE: These are placeholder values used during development. Final supply and precision to be determined later.
+  // NOTE: These are placeholder values used during development. Final inital supply will be determined and announced later
   string public constant name = 'DAV Token';
   string public constant symbol = 'DAV';
   uint8 public constant decimals = 18;
