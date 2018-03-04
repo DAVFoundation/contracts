@@ -116,4 +116,9 @@ contract('DAVToken', function(accounts) {
   xit('should throw an error if a non-owner tries to pause or unpause it');
   xit('should allow transfer of ownership by the owner');
   xit('should not allow transfer of ownership by a non-owner');
+  xit('should allow a token holder to burn their own tokens');
+  xit('should throw an error when a token holder tries to burn more tokens than they own');
+  xit('should allow owner to mint tokens');
+  xit('should throw an error if non-owner tries to mint tokens');
+  xit('should throw an error trying to mint tokens after mintingFinished');
 });
