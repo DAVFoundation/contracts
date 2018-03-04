@@ -2,6 +2,7 @@ pragma solidity ^0.4.15;
 
 // solium-disable uppercase
 import 'zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
 import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
 
 
@@ -9,7 +10,7 @@ import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
  * @title DAV Token
  * @dev ERC20 token
  */
-contract DAVToken is MintableToken, Pausable {
+contract DAVToken is MintableToken, BurnableToken, Pausable {
 
   // Token constants
   // NOTE: These are placeholder values used during development. Final supply and precision to be determined later.
