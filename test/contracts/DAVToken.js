@@ -3,7 +3,6 @@ const expectThrow = require('../helpers/expectThrow');
 const totalSupplySetting = 100000;
 
 contract('DAVToken', function(accounts) {
-
   describe('totalSupply()', () => {
     it('should return the correct total supply after construction', async function() {
       let token = await DAVToken.new();
@@ -60,7 +59,6 @@ contract('DAVToken', function(accounts) {
       await token.transferFrom(accounts[0], accounts[1], 1);
       assert.equal(await token.allowance(accounts[0], accounts[0]), 0);
     });
-
   });
 
   describe('pause()', () => {
@@ -91,7 +89,7 @@ contract('DAVToken', function(accounts) {
 
     it('should throw an error if a non-owner tries to pause', async () => {
       let token = await DAVToken.new();
-      await expectThrow(token.pause({from: accounts[1]}));
+      await expectThrow(token.pause({ from: accounts[1] }));
       assert.equal(await token.paused(), false);
     });
   });
@@ -115,7 +113,7 @@ contract('DAVToken', function(accounts) {
     it('should throw an error if a non-owner tries to unpause', async () => {
       let token = await DAVToken.new();
       await token.pause();
-      await expectThrow(token.unpause({from: accounts[1]}));
+      await expectThrow(token.unpause({ from: accounts[1] }));
       assert.equal(await token.paused(), true);
     });
   });
@@ -151,7 +149,9 @@ contract('DAVToken', function(accounts) {
 
   describe('burn()', () => {
     xit('should allow a token holder to burn their own tokens');
-    xit('should throw an error when a token holder tries to burn more tokens than they own');
+    xit(
+      'should throw an error when a token holder tries to burn more tokens than they own',
+    );
   });
 
   describe('mint()', () => {
@@ -159,5 +159,4 @@ contract('DAVToken', function(accounts) {
     xit('should throw an error if non-owner tries to mint tokens');
     xit('should throw an error trying to mint tokens after mintingFinished');
   });
-
 });
