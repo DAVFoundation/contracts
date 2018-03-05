@@ -16,15 +16,15 @@ contract DAVToken is MintableToken, BurnableToken, Pausable {
   string public constant name = 'DAV Token';
   string public constant symbol = 'DAV';
   uint8 public constant decimals = 18;
-  uint256 public constant INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals)); // Number of tokens padded with 0s for number of decimal places
 
   /**
    * @notice DAVToken constructor
    * Runs once on initial contract creation. Sets total supply and balances.
    */
   function DAVToken() public {
-    totalSupply_ = INITIAL_SUPPLY;
-    balances[msg.sender] = INITIAL_SUPPLY;
+    uint256 initialSupply = 1000000 * (10 ** uint256(decimals)); // Number of tokens padded with 0s for number of decimal places
+    totalSupply_ = initialSupply;
+    balances[msg.sender] = initialSupply;
   }
 
   /**
