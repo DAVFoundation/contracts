@@ -69,4 +69,8 @@ contract Identity {
         return identities[_id].wallet == _wallet;
     }
 
+    // Check identity registration status
+    function isRegistered(address _id) public view returns (bool) {
+        return identities[_id].wallet != 0x0;
+    }
 }
