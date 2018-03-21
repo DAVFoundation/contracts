@@ -46,7 +46,7 @@ contract('BasicMission', function(accounts) {
     signedEvent = BasicMissionContract.Signed();
 
     // Create Identity for User
-    registerIdentity(
+    await registerIdentity(
       IdentityContract,
       user.wallet,
       user.id,
@@ -56,7 +56,7 @@ contract('BasicMission', function(accounts) {
     );
 
     // Create Identity for Vehicle
-    registerIdentity(
+    await registerIdentity(
       IdentityContract,
       vehicle.wallet,
       vehicle.id,
@@ -73,11 +73,11 @@ contract('BasicMission', function(accounts) {
     // let vehicleTokenBalance;
 
     // Airdrop some money to User for testing
-    userTokenBalance = await IdentityContract.getBalance(user.id);
-    assert.equal(userTokenBalance, 0);
+    userTokenBalance = await IdentityContract.getBalance.call(user.id);
+    assert.equal(userTokenBalance.toNumber(), 0);
     await TokenContract.transfer(user.wallet, userAirdropAmount);
-    userTokenBalance = await IdentityContract.getBalance(user.id);
-    assert.equal(userTokenBalance, userAirdropAmount);
+    userTokenBalance = await IdentityContract.getBalance.call(user.id);
+    assert.equal(userTokenBalance.toNumber(), userAirdropAmount);
 
     // Vehicles creates new basic mission
     await BasicMissionContract.create(vehicle.id, user.id, 4, {from: vehicle.wallet});

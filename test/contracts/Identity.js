@@ -26,7 +26,7 @@ contract('Identity', function(accounts) {
         registerIdentity(
           IdentityContract,
           walletAddress,
-          '0x17325a469aef3472aa58dfdcf672881d79b31d57',
+          '0x17325a469aef3472aa58dfdcf672881d79b31d57'
         ),
       );
     });
@@ -38,19 +38,27 @@ contract('Identity', function(accounts) {
     xit('should throw when attempting to register with an invalid signature.s');
 
     it('should throw when attempting to register an existing DAV id', async function() {
-      registerIdentity(IdentityContract, walletAddress);
+      await registerIdentity(IdentityContract, walletAddress);
       await expectThrow(registerIdentity(IdentityContract, walletAddress));
     });
   });
 
   describe('getBalance', () => {
     beforeEach(async function() {
-      registerIdentity(IdentityContract, walletAddress);
+      return registerIdentity(
+        IdentityContract, 
+        walletAddress, 
+        sampleIdentities[1].id,
+        sampleIdentities[1].v,
+        sampleIdentities[1].r,
+        sampleIdentities[1].s
+      );
     });
 
     it('should return the correct DAV balance of an identity\'s wallet when given a DAV id', async function() {
+      var balance = await IdentityContract.getBalance(sampleIdentities[1].id);
       assert.equal(
-        await IdentityContract.getBalance(sampleIdentities[0].id),
+        balance.toNumber(),
         100,
       );
     });
@@ -58,9 +66,8 @@ contract('Identity', function(accounts) {
 
   describe('verifyOwnership', () => {
     beforeEach(async function() {
-      registerIdentity(IdentityContract, walletAddress);
+      return registerIdentity(IdentityContract, walletAddress);
     });
-
     it('should return true when identity and wallet match', async function() {
       assert.isTrue(
         await IdentityContract.verifyOwnership(
