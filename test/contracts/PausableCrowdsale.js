@@ -5,11 +5,8 @@ const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
 const BigNumber = web3.BigNumber;
 
-contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
+contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, buyer]) => {
 
-  const owner = accounts[1];
-  const bank = accounts[2];
-  const buyer = accounts[3];
   const rate = new BigNumber(10000);
   const value = new BigNumber(1);
 

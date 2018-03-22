@@ -10,12 +10,8 @@ const should = require('chai')
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-contract('DAVCrowdsale', (accounts) => {
+contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
-  const owner = accounts[1];
-  const bank = accounts[2];
-  const buyer = accounts[3];
-  const buyer2 = accounts[4];
   const rate = new BigNumber(10000);
   const value = ether(0.2);
   const expectedTokenAmount = rate.mul(value);
