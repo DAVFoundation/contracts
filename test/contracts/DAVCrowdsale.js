@@ -15,8 +15,9 @@ contract('DAVCrowdsale', function(accounts) {
   const owner = accounts[1];
   const bank = accounts[2];
   const buyer = accounts[3];
-  const rate = 10000;
+  const rate = new BigNumber(10000);
   const value = ether(0.2);
+  const expectedTokenAmount = rate.mul(value);
 
   let token;
   let crowdsale;
@@ -32,8 +33,19 @@ contract('DAVCrowdsale', function(accounts) {
       await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
     });
 
-    xit('should assign tokens to sender', async () => {});
-    xit('should forward funds to wallet', async () => {});
+    it('should assign tokens to sender', async () => {
+      await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
+      const balance = await token.balanceOf(buyer);
+      balance.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should forward funds to wallet', async () => {
+      const pre = web3.eth.getBalance(bank);
+      await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
+      const post = web3.eth.getBalance(bank);
+      post.minus(pre).should.be.bignumber.equal(value);
+    });
+
     xit('should log purchase', async () => {});
   });
 
