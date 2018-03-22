@@ -31,7 +31,7 @@ contract('DAVCrowdsale is PausableCrowdsale', function(accounts) {
           assert.equal(paused, true);
         });
 
-        it('emits a paused event', async function () {
+        it('emits a Pause event', async function () {
           const { logs } = await crowdsale.pause({ from: owner });
           assert.equal(logs.length, 1);
           assert.equal(logs[0].event, 'Pause');
