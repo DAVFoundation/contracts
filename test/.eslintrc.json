@@ -6,6 +6,7 @@
     "xit": false,
     "beforeEach": false,
     "describe": false,
-    "assert": false
+    "assert": false,
+    "web3": false
   }
 }
