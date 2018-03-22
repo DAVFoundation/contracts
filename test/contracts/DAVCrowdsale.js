@@ -10,7 +10,7 @@ const should = require('chai')
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-contract('DAVCrowdsale', function(accounts) {
+contract('DAVCrowdsale', (accounts) => {
 
   const owner = accounts[1];
   const bank = accounts[2];

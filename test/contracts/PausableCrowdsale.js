@@ -5,7 +5,7 @@ const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
 const BigNumber = web3.BigNumber;
 
-contract('DAVCrowdsale is PausableCrowdsale', function(accounts) {
+contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
 
   const owner = accounts[1];
   const bank = accounts[2];
@@ -21,38 +21,38 @@ contract('DAVCrowdsale is PausableCrowdsale', function(accounts) {
   });
 
   describe('pause()', () => {
-    describe('when the sender is the token owner', function () {
+    describe('when the sender is the token owner', () => {
 
-      describe('when the token is unpaused', function () {
+      describe('when the token is unpaused', () => {
 
-        it('pauses the token', async function () {
+        it('pauses the token', async () => {
           await crowdsale.pause({ from: owner });
           const paused = await crowdsale.paused();
           assert.equal(paused, true);
         });
 
-        it('emits a Pause event', async function () {
+        it('emits a Pause event', async () => {
           const { logs } = await crowdsale.pause({ from: owner });
           assert.equal(logs.length, 1);
           assert.equal(logs[0].event, 'Pause');
         });
       });
 
-      describe('when the token is paused', function () {
-        beforeEach(async function () {
+      describe('when the token is paused', () => {
+        beforeEach(async () => {
           await crowdsale.pause({ from: owner });
         });
 
-        it('reverts', async function () {
+        it('reverts', async () => {
           await assertRevert(crowdsale.pause({ from: owner }));
         });
       });
 
     });
 
-    describe('when the sender is not the token owner', function () {
+    describe('when the sender is not the token owner', () => {
 
-      it('reverts', async function () {
+      it('reverts', async () => {
         await assertRevert(crowdsale.pause({ from: bank }));
       });
 
@@ -60,55 +60,55 @@ contract('DAVCrowdsale is PausableCrowdsale', function(accounts) {
   });
 
   describe('unpause()', () => {
-    describe('when the sender is the token owner', function () {
+    describe('when the sender is the token owner', () => {
 
-      describe('when the token is paused', function () {
-        beforeEach(async function () {
+      describe('when the token is paused', () => {
+        beforeEach(async () => {
           await crowdsale.pause({ from: owner });
         });
 
-        it('unpauses the token', async function () {
+        it('unpauses the token', async () => {
           await crowdsale.unpause({ from: owner });
           const paused = await crowdsale.paused();
           assert.equal(paused, false);
         });
 
-        it('emits an Unpause event', async function () {
+        it('emits an Unpause event', async () => {
           const { logs } = await crowdsale.unpause({ from: owner });
           assert.equal(logs.length, 1);
           assert.equal(logs[0].event, 'Unpause');
         });
       });
 
-      describe('when the token is unpaused', function () {
-        it('reverts', async function () {
+      describe('when the token is unpaused', () => {
+        it('reverts', async () => {
           await assertRevert(crowdsale.unpause({ from: owner }));
         });
       });
 
     });
 
-    describe('when the sender is not the token owner', function () {
-      it('reverts', async function () {
+    describe('when the sender is not the token owner', () => {
+      it('reverts', async () => {
         await assertRevert(crowdsale.unpause({ from: bank }));
       });
     });
   });
 
-  describe('paused', function () {
+  describe('paused', () => {
 
-    it('is not paused by default', async function () {
+    it('is not paused by default', async () => {
       const paused = await crowdsale.paused({ from: owner });
       assert.equal(paused, false);
     });
 
-    it('is paused after being paused', async function () {
+    it('is paused after being paused', async () => {
       await crowdsale.pause({ from: owner });
       const paused = await crowdsale.paused({ from: owner });
       assert.equal(paused, true);
     });
 
-    it('is not paused after being paused and then unpaused', async function () {
+    it('is not paused after being paused and then unpaused', async () => {
       await crowdsale.pause({ from: owner });
       await crowdsale.unpause({ from: owner });
       const paused = await crowdsale.paused({ from: owner });
