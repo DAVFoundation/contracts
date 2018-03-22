@@ -95,4 +95,26 @@ contract('DAVCrowdsale is PausableCrowdsale', function(accounts) {
     });
   });
 
+  describe('paused', function () {
+
+    it('is not paused by default', async function () {
+      const paused = await crowdsale.paused({ from: owner });
+      assert.equal(paused, false);
+    });
+
+    it('is paused after being paused', async function () {
+      await crowdsale.pause({ from: owner });
+      const paused = await crowdsale.paused({ from: owner });
+      assert.equal(paused, true);
+    });
+
+    it('is not paused after being paused and then unpaused', async function () {
+      await crowdsale.pause({ from: owner });
+      await crowdsale.unpause({ from: owner });
+      const paused = await crowdsale.paused({ from: owner });
+      assert.equal(paused, false);
+    });
+
+  });
+
 });
