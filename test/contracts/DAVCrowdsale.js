@@ -76,7 +76,15 @@ contract('DAVCrowdsale', function(accounts) {
       post.minus(pre).should.be.bignumber.equal(value);
     });
 
-    xit('should log purchase', async () => {});
+    it('should log purchase', async () => {
+      const { logs } = await crowdsale.buyTokens(buyer, { from: buyer, value });
+      const event = logs.find(e => e.event === 'TokenPurchase');
+      should.exist(event);
+      event.args.purchaser.should.equal(buyer);
+      event.args.beneficiary.should.equal(buyer);
+      event.args.value.should.be.bignumber.equal(value);
+      event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
+    });
   });
 
   describe('pause()', () => {
