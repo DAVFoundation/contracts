@@ -29,7 +29,7 @@ contract('DAVCrowdsale', (accounts) => {
     await token.transferOwnership(crowdsale.address);
   });
 
-  describe('fallback function', () => {
+  describe('high-level purchase using fallback function', () => {
     it('should accept payments', async () => {
       await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
     });
