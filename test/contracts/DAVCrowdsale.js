@@ -34,14 +34,14 @@ contract('DAVCrowdsale', function(accounts) {
     });
 
     it('should assign tokens to sender', async () => {
-      await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
+      await crowdsale.sendTransaction({ from: buyer, value });
       const balance = await token.balanceOf(buyer);
       balance.should.be.bignumber.equal(expectedTokenAmount);
     });
 
     it('should forward funds to wallet', async () => {
       const pre = web3.eth.getBalance(bank);
-      await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
+      await crowdsale.sendTransaction({ from: buyer, value });
       const post = web3.eth.getBalance(bank);
       post.minus(pre).should.be.bignumber.equal(value);
     });
