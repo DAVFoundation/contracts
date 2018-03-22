@@ -1,3 +1,4 @@
+const assertRevert = require('../helpers/assertRevert');
 const ether = require('../helpers/ether');
 
 const BigNumber = web3.BigNumber;
@@ -87,11 +88,49 @@ contract('DAVCrowdsale', function(accounts) {
     });
   });
 
-  describe('pause()', () => {
-    xit('should be pausable', async () => {});
+  describe('PausableCrowdsale', () => {
+    describe('pause()', () => {
+      describe('when the sender is the token owner', function () {
+
+        describe('when the token is unpaused', function () {
+
+          it('pauses the token', async function () {
+            await crowdsale.pause({ from: owner });
+            const paused = await crowdsale.paused();
+            assert.equal(paused, true);
+          });
+
+          it('emits a paused event', async function () {
+            const { logs } = await crowdsale.pause({ from: owner });
+            assert.equal(logs.length, 1);
+            assert.equal(logs[0].event, 'Pause');
+          });
+        });
+
+        describe('when the token is paused', function () {
+          beforeEach(async function () {
+            await crowdsale.pause({ from: owner });
+          });
+
+          it('reverts', async function () {
+            await assertRevert(crowdsale.pause({ from: owner }));
+          });
+        });
+
+      });
+
+      describe('when the sender is not the token owner', function () {
+
+        it('reverts', async function () {
+          await assertRevert(crowdsale.pause({ from: bank }));
+        });
+
+      });
+    });
+
+    describe('unpause()', () => {
+      xit('should be unpausable', async () => {});
+    });
   });
 
-  describe('unpause()', () => {
-    xit('should be unpausable', async () => {});
-  });
 });
