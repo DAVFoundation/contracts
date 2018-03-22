@@ -21,11 +21,11 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
   });
 
   describe('pause()', () => {
-    describe('when the sender is the token owner', () => {
+    describe('when the sender is the crowdsale owner', () => {
 
-      describe('when the token is unpaused', () => {
+      describe('when the crowdsale is unpaused', () => {
 
-        it('pauses the token', async () => {
+        it('pauses the crowdsale', async () => {
           await crowdsale.pause({ from: owner });
           const paused = await crowdsale.paused();
           assert.equal(paused, true);
@@ -38,7 +38,7 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
         });
       });
 
-      describe('when the token is paused', () => {
+      describe('when the crowdsale is paused', () => {
         beforeEach(async () => {
           await crowdsale.pause({ from: owner });
         });
@@ -50,7 +50,7 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
 
     });
 
-    describe('when the sender is not the token owner', () => {
+    describe('when the sender is not the crowdsale owner', () => {
 
       it('reverts', async () => {
         await assertRevert(crowdsale.pause({ from: bank }));
@@ -60,14 +60,14 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
   });
 
   describe('unpause()', () => {
-    describe('when the sender is the token owner', () => {
+    describe('when the sender is the crowdsale owner', () => {
 
-      describe('when the token is paused', () => {
+      describe('when the crowdsale is paused', () => {
         beforeEach(async () => {
           await crowdsale.pause({ from: owner });
         });
 
-        it('unpauses the token', async () => {
+        it('unpauses the crowdsale', async () => {
           await crowdsale.unpause({ from: owner });
           const paused = await crowdsale.paused();
           assert.equal(paused, false);
@@ -80,7 +80,7 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
         });
       });
 
-      describe('when the token is unpaused', () => {
+      describe('when the crowdsale is unpaused', () => {
         it('reverts', async () => {
           await assertRevert(crowdsale.unpause({ from: owner }));
         });
@@ -88,7 +88,7 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
 
     });
 
-    describe('when the sender is not the token owner', () => {
+    describe('when the sender is not the crowdsale owner', () => {
       it('reverts', async () => {
         await assertRevert(crowdsale.unpause({ from: bank }));
       });
