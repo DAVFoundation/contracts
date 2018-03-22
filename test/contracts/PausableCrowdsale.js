@@ -80,6 +80,18 @@ contract('DAVCrowdsale is PausableCrowdsale', function(accounts) {
         });
       });
 
+      describe('when the token is unpaused', function () {
+        it('reverts', async function () {
+          await assertRevert(crowdsale.unpause({ from: owner }));
+        });
+      });
+
+    });
+
+    describe('when the sender is not the token owner', function () {
+      it('reverts', async function () {
+        await assertRevert(crowdsale.unpause({ from: bank }));
+      });
     });
   });
 
