@@ -21,6 +21,21 @@ contract('Identity', function(accounts) {
       registerIdentity(IdentityContract, walletAddress);
     });
 
+    it('isRegistered should return true for registered address', async function() {
+      await registerIdentity(IdentityContract, walletAddress);
+      var isRegistered = await IdentityContract.isRegistered.call(sampleIdentities[0].id);
+      assert.isTrue(
+        isRegistered
+      );
+    });
+
+    it('isRegistered should return flase for unregistered address', async function() {
+      var isRegistered = await IdentityContract.isRegistered.call(sampleIdentities[0].id);
+      assert.isNotTrue(
+        isRegistered
+      );
+    });
+
     it('should throw when attempting to register with an invalid DAV id', async function() {
       await expectThrow(
         registerIdentity(

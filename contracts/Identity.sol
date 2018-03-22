@@ -17,7 +17,7 @@ contract Identity {
 
     bytes private constant MESSAGE_PREFIX = "\x19Ethereum Signed Message:\n32";
     bytes private constant DAV_REGESTRATION_REQUEST = "DAV_REGESTRATION_REQUEST";
-    
+
 
     /**
       * @dev Constructor
