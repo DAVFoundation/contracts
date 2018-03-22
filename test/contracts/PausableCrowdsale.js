@@ -60,7 +60,27 @@ contract('DAVCrowdsale is PausableCrowdsale', function(accounts) {
   });
 
   describe('unpause()', () => {
-    xit('should be unpausable', async () => {});
+    describe('when the sender is the token owner', function () {
+
+      describe('when the token is paused', function () {
+        beforeEach(async function () {
+          await crowdsale.pause({ from: owner });
+        });
+
+        it('unpauses the token', async function () {
+          await crowdsale.unpause({ from: owner });
+          const paused = await crowdsale.paused();
+          assert.equal(paused, false);
+        });
+
+        it('emits an Unpause event', async function () {
+          const { logs } = await crowdsale.unpause({ from: owner });
+          assert.equal(logs.length, 1);
+          assert.equal(logs[0].event, 'Unpause');
+        });
+      });
+
+    });
   });
 
 });
