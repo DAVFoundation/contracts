@@ -14,96 +14,96 @@ import "./DAVToken.sol";
  */
 contract BasicMission {
 
-    uint256 private nonce;
+  uint256 private nonce;
 
-    struct Mission {
-        address seller;
-        address buyer;
-        uint256 cost;
-        uint256 balance;
-        bool isSigned;
-        mapping (uint8 => bool) resolvers;
-    }
+  struct Mission {
+    address seller;
+    address buyer;
+    uint256 cost;
+    uint256 balance;
+    bool isSigned;
+    mapping (uint8 => bool) resolvers;
+  }
 
-    mapping (bytes32 => Mission) private missions;
+  mapping (bytes32 => Mission) private missions;
 
-    event Create(
-        bytes32 id,
-        address sellerId,
-        address buyerId
+  event Create(
+    bytes32 id,
+    address sellerId,
+    address buyerId
+  );
+
+  event Signed(
+    bytes32 id
+  );
+
+  DAVToken private token;
+  Identity private identity;
+
+  /**
+  * @dev Constructor
+  *
+  * @param _identityContract address of the Identity contract
+  * @param _davTokenContract address of the DAVToken contract
+  */
+  function BasicMission(Identity _identityContract, DAVToken _davTokenContract) public {
+    identity = _identityContract;
+    token = _davTokenContract;
+  }
+
+  /**
+  * @notice Create a new mission
+  * @param _sellerId The DAV Identity of the person providing the service
+  * @param _buyerId The DAV Identity of the person ordering the service
+  * @param _cost The total cost of the mission to be paid by buyer
+  */
+  function create(address _sellerId, address _buyerId, uint256 _cost) public {
+    // Verify that message sender controls the seller's wallet
+    require(
+      identity.verifyOwnership(_sellerId, msg.sender)
     );
 
-    event Signed(
-        bytes32 id
+    // Create mission
+    bytes32 missionId = keccak256("BasicMission", block.number, _sellerId, _buyerId, nonce++);
+    missions[missionId] = Mission({
+      seller: _sellerId,
+      buyer: _buyerId,
+      cost: _cost,
+      balance: 0,
+      isSigned: false
+    });
+
+    // Event
+    Create(missionId, _sellerId, _buyerId);
+  }
+
+  /**
+  * @notice Fund a mission
+  * @param _missionId The id of the mission
+  * @param _buyerId The DAV Identity of the person ordering the service
+  */
+  function fund(bytes32 _missionId, address _buyerId) public {
+    // Verify that message sender controls the seller's wallet
+    require(
+      identity.verifyOwnership(_buyerId, msg.sender)
     );
 
-    DAVToken private token;
-    Identity private identity;
+    // Verify buyer's balance is sufficient
+    require(
+      identity.getBalance(_buyerId) >= missions[_missionId].cost
+    );
 
-    /**
-    * @dev Constructor
-    *
-    * @param _identityContract address of the Identity contract
-    * @param _davTokenContract address of the DAVToken contract
-    */
-    function BasicMission(Identity _identityContract, DAVToken _davTokenContract) public {
-        identity = _identityContract;
-        token = _davTokenContract;
-    }
+    // Transfer tokens to the mission contract
+    token.transferFrom(msg.sender, this, missions[_missionId].cost);
 
-    /**
-    * @notice Create a new mission
-    * @param _sellerId The DAV Identity of the person providing the service
-    * @param _buyerId The DAV Identity of the person ordering the service
-    * @param _cost The total cost of the mission to be paid by buyer
-    */
-    function create(address _sellerId, address _buyerId, uint256 _cost) public {
-        // Verify that message sender controls the seller's wallet
-        require(
-            identity.verifyOwnership(_sellerId, msg.sender)
-        );
+    // Update mission balance
+    missions[_missionId].balance = missions[_missionId].cost;
 
-        // Create mission
-        bytes32 missionId = keccak256("BasicMission", block.number, _sellerId, _buyerId, nonce++);
-        missions[missionId] = Mission({
-            seller: _sellerId,
-            buyer: _buyerId,
-            cost: _cost,
-            balance: 0,
-            isSigned: false
-        });
+    // designate mission as signed
+    missions[_missionId].isSigned = true;
 
-        // Event
-        Create(missionId, _sellerId, _buyerId);
-    }
-
-    /**
-    * @notice Fund a mission
-    * @param _missionId The id of the mission
-    * @param _buyerId The DAV Identity of the person ordering the service
-    */
-    function fund(bytes32 _missionId, address _buyerId) public {
-        // Verify that message sender controls the seller's wallet
-        require(
-            identity.verifyOwnership(_buyerId, msg.sender)
-        );
-
-        // Verify buyer's balance is sufficient
-        require(
-            identity.getBalance(_buyerId) >= missions[_missionId].cost
-        );
-
-        // Transfer tokens to the mission contract
-        token.transferFrom(msg.sender, this, missions[_missionId].cost);
-
-        // Update mission balance
-        missions[_missionId].balance = missions[_missionId].cost;
-
-        // designate mission as signed
-        missions[_missionId].isSigned = true;
-
-        // Event
-        Signed(_missionId);
-    }
+    // Event
+    Signed(_missionId);
+  }
 
 }
