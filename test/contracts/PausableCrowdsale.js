@@ -9,7 +9,9 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
 
   const owner = accounts[1];
   const bank = accounts[2];
+  const buyer = accounts[3];
   const rate = new BigNumber(10000);
+  const value = new BigNumber(1);
 
   let token;
   let crowdsale;
@@ -113,6 +115,26 @@ contract('DAVCrowdsale is PausableCrowdsale', (accounts) => {
       await crowdsale.unpause({ from: owner });
       const paused = await crowdsale.paused({ from: owner });
       assert.equal(paused, false);
+    });
+
+  });
+
+  describe('when the crowdsale is paused', () => {
+
+    beforeEach(async () => {
+      await crowdsale.pause({ from: owner });
+    });
+
+    describe('high-level purchase using fallback function', () => {
+      it('reverts', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from: buyer, value }));
+      });
+    });
+
+    describe('buyTokens()', () => {
+      it('reverts', async () => {
+        await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value }));
+      });
     });
 
   });
