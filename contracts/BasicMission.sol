@@ -1,7 +1,7 @@
 pragma solidity ^0.4.15;
 
-import "./Identity.sol";
-import "./DAVToken.sol";
+import './Identity.sol';
+import './DAVToken.sol';
 
 
 /**
@@ -64,7 +64,7 @@ contract BasicMission {
     );
 
     // Create mission
-    bytes32 missionId = keccak256("BasicMission", block.number, _sellerId, _buyerId, nonce++);
+    bytes32 missionId = keccak256('BasicMission', block.number, _sellerId, _buyerId, nonce++);
     missions[missionId] = Mission({
       seller: _sellerId,
       buyer: _buyerId,

@@ -71,7 +71,7 @@ contract('Identity', function(accounts) {
     });
 
     it('should return the correct DAV balance of an identity\'s wallet when given a DAV id', async function() {
-      var balance = await IdentityContract.getBalance(sampleIdentities[1].id);
+      const balance = await IdentityContract.getBalance(sampleIdentities[1].id);
       assert.equal(
         balance.toNumber(),
         100,
@@ -81,7 +81,7 @@ contract('Identity', function(accounts) {
 
   describe('verifyOwnership', () => {
     beforeEach(async function() {
-      return registerIdentity(IdentityContract, walletAddress);
+      await registerIdentity(IdentityContract, walletAddress);
     });
     it('should return true when identity and wallet match', async function() {
       assert.isTrue(
