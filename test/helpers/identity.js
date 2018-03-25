@@ -25,7 +25,7 @@ const registerIdentity = (
   v = sampleIdentities[0].v,
   r = sampleIdentities[0].r,
   s = sampleIdentities[0].s,
-) => contract.register(id, walletAddress, v, r, s);
+) => contract.register(id, v, r, s, {from: walletAddress});
 
 module.exports = {
   sampleIdentities,

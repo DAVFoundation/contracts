@@ -30,7 +30,7 @@ contract Identity {
     token = _davTokenContract;
   }
 
-  function register(address _id, address _wallet, uint8 _v, bytes32 _r, bytes32 _s) public {
+  function register(address _id, uint8 _v, bytes32 _r, bytes32 _s) public {
     // Make sure id isn't registered already
     require(
       identities[_id].wallet == 0x0
@@ -44,7 +44,7 @@ contract Identity {
 
     // Register in identities mapping
     identities[_id] = DAVIdentity({
-      wallet: _wallet
+      wallet: msg.sender
     });
   }
 
