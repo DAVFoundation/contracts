@@ -22,10 +22,10 @@ contract Identity {
 
 
   /**
-  * @dev Constructor
-  *
-  * @param _davTokenContract address of the DAVToken contract
-  */
+   * @dev Constructor
+   *
+   * @param _davTokenContract address of the DAVToken contract
+   */
   function Identity(DAVToken _davTokenContract) public {
     token = _davTokenContract;
   }
