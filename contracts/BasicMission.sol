@@ -17,8 +17,8 @@ contract BasicMission {
   uint256 private nonce;
 
   struct Mission {
-    string seller;
-    string buyer;
+    address seller;
+    address buyer;
     uint256 cost;
     uint256 balance;
     bool isSigned;
@@ -29,8 +29,8 @@ contract BasicMission {
 
   event Create(
     bytes32 id,
-    string sellerId,
-    string buyerId
+    address sellerId,
+    address buyerId
   );
 
   event Signed(
@@ -52,12 +52,12 @@ contract BasicMission {
   }
 
   /**
-  * @notice Create a new mission
-  * @param _sellerId The DAV Identity of the person providing the service
-  * @param _buyerId The DAV Identity of the person ordering the service
-  * @param _cost The total cost of the mission to be paid by buyer
-  */
-  function create(string _sellerId, string _buyerId, uint256 _cost) public {
+   * @notice Create a new mission
+   * @param _sellerId The DAV Identity of the person providing the service
+   * @param _buyerId The DAV Identity of the person ordering the service
+   * @param _cost The total cost of the mission to be paid by buyer
+   */
+  function create(address _sellerId, address _buyerId, uint256 _cost) public {
     // Verify that message sender controls the seller's wallet
     require(
       identity.verifyOwnership(_sellerId, msg.sender)
@@ -78,11 +78,11 @@ contract BasicMission {
   }
 
   /**
-  * @notice Fund a mission
-  * @param _missionId The id of the mission
-  * @param _buyerId The DAV Identity of the person ordering the service
-  */
-  function fund(bytes32 _missionId, string _buyerId) public {
+   * @notice Fund a mission
+   * @param _missionId The id of the mission
+   * @param _buyerId The DAV Identity of the person ordering the service
+   */
+  function fund(bytes32 _missionId, address _buyerId) public {
     // Verify that message sender controls the seller's wallet
     require(
       identity.verifyOwnership(_buyerId, msg.sender)
