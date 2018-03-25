@@ -60,7 +60,7 @@ contract('Identity', function(accounts) {
 
   describe('getBalance', () => {
     beforeEach(async function() {
-      return registerIdentity(
+      await registerIdentity(
         IdentityContract, 
         walletAddress, 
         sampleIdentities[1].id,
