@@ -9,7 +9,7 @@ const BigNumber = web3.BigNumber;
 contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, buyer]) => {
 
   const rate = new BigNumber(10000);
-  const value = new BigNumber(1);
+  const value = ether(0.2);
 
   let token;
   let crowdsale;
