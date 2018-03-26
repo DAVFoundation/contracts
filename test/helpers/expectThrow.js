@@ -1,4 +1,4 @@
-// Thise code is based on https://github.com/OpenZeppelin/zeppelin-solidity/blob/86628468386b2ed19b74101fa65529b45bdb8b8c/test/helpers/expectThrow.js
+// This code is based on https://github.com/OpenZeppelin/zeppelin-solidity/blob/86628468386b2ed19b74101fa65529b45bdb8b8c/test/helpers/expectThrow.js
 
 module.exports = async promise => {
   try {

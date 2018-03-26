@@ -1,4 +1,4 @@
-// Thise code is based on https://github.com/OpenZeppelin/zeppelin-solidity/blob/323d1fa9415695f9132af17a9ebd57642afb7f29/test/helpers/assertRevert.js
+// This code is based on https://github.com/OpenZeppelin/zeppelin-solidity/blob/323d1fa9415695f9132af17a9ebd57642afb7f29/test/helpers/assertRevert.js
 
 module.exports = async promise => {
   try {
