@@ -11,6 +11,7 @@ const advanceBlock = () => {
     });
   });
 };
+
 const advanceToBlock = async (number) => {
   if (web3.eth.blockNumber > number) {
     throw Error(`block number ${number} is in the past (current is ${web3.eth.blockNumber})`);
@@ -20,8 +21,6 @@ const advanceToBlock = async (number) => {
     await advanceBlock();
   }
 };
-
-
 
 module.exports = {
   advanceBlock,
