@@ -1,7 +1,6 @@
 pragma solidity ^0.4.18;
 
 import './PausableCrowdsale.sol';
-import 'zeppelin-solidity/contracts/crowdsale/emission/MintedCrowdsale.sol';
 import 'zeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol';
 import './interfaces/IDAVToken.sol';
 
@@ -9,7 +8,7 @@ import './interfaces/IDAVToken.sol';
  * @title DAVCrowdsale
  * @dev DAV Crowdsale contract
  */
-contract DAVCrowdsale is MintedCrowdsale, PausableCrowdsale, TimedCrowdsale {
+contract DAVCrowdsale is PausableCrowdsale, TimedCrowdsale {
 
   uint256 public minimalContribution;
 

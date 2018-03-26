@@ -9,6 +9,6 @@ module.exports = async (deployer, network, [bank]) => {
   const openingTime = Date.parse('30 April 2018 14:00:00 GMT')/1000;
   const closingTime = Date.parse('13 May 2018 14:00:00 GMT')/1000;
 
-  await deployer.deploy(DAVToken);
+  await deployer.deploy(DAVToken, 1000000000000000000000000);
   await deployer.deploy(DAVCrowdsale, rate, bank, DAVToken.address, minimalContribution, openingTime, closingTime);
 };

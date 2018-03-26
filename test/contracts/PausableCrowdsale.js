@@ -4,13 +4,15 @@ const { advanceBlock } = require('../helpers/advanceToBlock');
 const { increaseTimeTo, duration } = require('../helpers/increaseTime');
 const latestTime = require('../helpers/latestTime');
 
-const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
+const DAVToken = artifacts.require('./DAVToken.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
 const BigNumber = web3.BigNumber;
 
 contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, buyer]) => {
 
+  const totalSupply = new BigNumber('1e22');
+  const crowdsaleSupply = totalSupply.mul(0.4);
   const rate = new BigNumber(10000);
   const value = ether(0.2);
 
@@ -27,9 +29,9 @@ contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, buyer]) => {
   beforeEach(async () => {
     openingTime = latestTime() + duration.weeks(1);
     closingTime = openingTime + duration.weeks(1);
-    token = await DAVToken.new();
+    token = await DAVToken.new(totalSupply);
     crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), openingTime, closingTime, { from: owner });
-    await token.transferOwnership(crowdsale.address);
+    await token.transfer(crowdsale.address, crowdsaleSupply);
     await increaseTimeTo(openingTime);
     await advanceBlock();
   });

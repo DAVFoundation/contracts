@@ -1,39 +1,39 @@
-const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
+const DAVToken = artifacts.require('./mocks/DAVToken.sol');
 const expectThrow = require('../helpers/expectThrow');
-const totalSupplySetting = 100000;
+const totalSupply = 100000;
 
 contract('DAVToken', function([user1, user2]) {
   let token;
 
   beforeEach(async () => {
-    token = await DAVToken.new();
+    token = await DAVToken.new(totalSupply);
   });
 
   describe('totalSupply()', () => {
     it('should return the correct total supply after construction', async function() {
-      let totalSupply = await token.totalSupply();
-      assert.equal(totalSupply, totalSupplySetting);
+      const totalSupplyReturned = await token.totalSupply();
+      assert.equal(totalSupplyReturned, totalSupply);
     });
   });
 
   describe('balanceOf()', () => {
     it('should return the correct balance of an account', async function() {
       let firstAccountBalance = await token.balanceOf(user1);
-      assert.equal(firstAccountBalance, totalSupplySetting);
+      assert.equal(firstAccountBalance, totalSupply);
     });
   });
 
   describe('transfer()', () => {
     it('should transfer from sender when calling transfer()', async function() {
-      await token.transfer(user2, totalSupplySetting);
+      await token.transfer(user2, totalSupply);
       let firstAccountBalance = await token.balanceOf(user1);
       let secondAccountBalance = await token.balanceOf(user2);
       assert.equal(firstAccountBalance, 0);
-      assert.equal(secondAccountBalance, totalSupplySetting);
+      assert.equal(secondAccountBalance, totalSupply);
     });
 
     it('should revert when trying to transfer more than balance', async function() {
-      await expectThrow(token.transfer(user2, totalSupplySetting + 1));
+      await expectThrow(token.transfer(user2, totalSupply + 1));
     });
 
     it('should revert when trying to transfer without approval', async function() {
@@ -143,9 +143,4 @@ contract('DAVToken', function([user1, user2]) {
     );
   });
 
-  describe('mint()', () => {
-    xit('should allow owner to mint tokens');
-    xit('should revert if non-owner tries to mint tokens');
-    xit('should revert trying to mint tokens after mintingFinished');
-  });
 });
