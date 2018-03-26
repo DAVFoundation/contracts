@@ -1,5 +1,8 @@
 const ether = require('../helpers/ether');
 const assertRevert = require('../helpers/assertRevert');
+const { advanceBlock } = require('../helpers/advanceToBlock');
+const { increaseTimeTo, duration } = require('../helpers/increaseTime');
+const latestTime = require('../helpers/latestTime');
 
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
@@ -13,11 +16,22 @@ contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, buyer]) => {
 
   let token;
   let crowdsale;
+  let openingTime;
+  let closingTime;
+
+  before(async function () {
+    // Advance to the next block to correctly read time in the solidity "now" function
+    await advanceBlock();
+  });
 
   beforeEach(async () => {
+    openingTime = latestTime() + duration.weeks(1);
+    closingTime = openingTime + duration.weeks(1);
     token = await DAVToken.new();
-    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), { from: owner });
+    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), openingTime, closingTime, { from: owner });
     await token.transferOwnership(crowdsale.address);
+    await increaseTimeTo(openingTime);
+    await advanceBlock();
   });
 
   describe('pause()', () => {

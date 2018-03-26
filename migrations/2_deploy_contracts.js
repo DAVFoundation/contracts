@@ -6,7 +6,9 @@ module.exports = async (deployer, network, [bank]) => {
   const rate = 10000;
   // Minimal acceptable contribution amount
   const minimalContribution = web3.toWei(0.2, 'ether');
+  const openingTime = Date.parse('30 April 2018 14:00:00 GMT')/1000;
+  const closingTime = Date.parse('13 May 2018 14:00:00 GMT')/1000;
 
   await deployer.deploy(DAVToken);
-  await deployer.deploy(DAVCrowdsale, rate, bank, DAVToken.address, minimalContribution);
+  await deployer.deploy(DAVCrowdsale, rate, bank, DAVToken.address, minimalContribution, openingTime, closingTime);
 };

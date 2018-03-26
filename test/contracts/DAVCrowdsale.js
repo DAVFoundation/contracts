@@ -1,6 +1,8 @@
 const ether = require('../helpers/ether');
 const assertRevert = require('../helpers/assertRevert');
 const { advanceBlock } = require('../helpers/advanceToBlock');
+const { increaseTimeTo, duration } = require('../helpers/increaseTime');
+const latestTime = require('../helpers/latestTime');
 
 const BigNumber = web3.BigNumber;
 
@@ -20,81 +22,145 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
   let token;
   let crowdsale;
+  let openingTime;
+  let closingTime;
+  let afterClosingTime;
 
   before(async function () {
-    // Advance to the next block to correctly read time in the solidity "now" function interpreted by testrpc
+    // Advance to the next block to correctly read time in the solidity "now" function
     await advanceBlock();
   });
 
   beforeEach(async () => {
+    openingTime = latestTime() + duration.weeks(1);
+    closingTime = openingTime + duration.weeks(1);
+    afterClosingTime = closingTime + duration.seconds(1);
     token = await DAVToken.new();
-    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), { from: owner });
+    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), openingTime, closingTime, {from: owner});
     await token.transferOwnership(crowdsale.address);
   });
 
-  describe('high-level purchase using fallback function', () => {
-    it('should accept payments', async () => {
-      await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
+  describe('between the Crowdsale start and end times', () => {
+
+    beforeEach(async () => {
+      await increaseTimeTo(openingTime);
+      await advanceBlock();
     });
 
-    it('should assign tokens to sender', async () => {
-      await crowdsale.sendTransaction({ from: buyer, value });
-      const balance = await token.balanceOf(buyer);
-      balance.should.be.bignumber.equal(expectedTokenAmount);
+    describe('high-level purchase using fallback function', () => {
+      it('should accept payments', async () => {
+        await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
+      });
+
+      it('should assign tokens to sender', async () => {
+        await crowdsale.sendTransaction({ from: buyer, value });
+        const balance = await token.balanceOf(buyer);
+        balance.should.be.bignumber.equal(expectedTokenAmount);
+      });
+
+      it('should forward funds to wallet', async () => {
+        const pre = web3.eth.getBalance(bank);
+        await crowdsale.sendTransaction({ from: buyer, value });
+        const post = web3.eth.getBalance(bank);
+        post.minus(pre).should.be.bignumber.equal(value);
+      });
+
+      it('should log purchase', async () => {
+        const { logs } = await crowdsale.sendTransaction({ from: buyer, value });
+        const event = logs.find(e => e.event === 'TokenPurchase');
+        should.exist(event);
+        event.args.purchaser.should.equal(buyer);
+        event.args.beneficiary.should.equal(buyer);
+        event.args.value.should.be.bignumber.equal(value);
+        event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
+      });
+
+      it('should revert if amount is less than minimal contribution', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from: buyer, value: ether(0.19) }));
+      });
     });
 
-    it('should forward funds to wallet', async () => {
-      const pre = web3.eth.getBalance(bank);
-      await crowdsale.sendTransaction({ from: buyer, value });
-      const post = web3.eth.getBalance(bank);
-      post.minus(pre).should.be.bignumber.equal(value);
-    });
+    describe('buyTokens()', () => {
+      it('should accept payments', async () => {
+        await crowdsale.buyTokens(buyer, { from: buyer, value }).should.be.fulfilled;
+      });
 
-    it('should log purchase', async () => {
-      const { logs } = await crowdsale.sendTransaction({ from: buyer, value });
-      const event = logs.find(e => e.event === 'TokenPurchase');
-      should.exist(event);
-      event.args.purchaser.should.equal(buyer);
-      event.args.beneficiary.should.equal(buyer);
-      event.args.value.should.be.bignumber.equal(value);
-      event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
-    });
+      it('should assign tokens to beneficiary', async () => {
+        await crowdsale.buyTokens(buyer, { from: buyer2, value });
+        const balance = await token.balanceOf(buyer);
+        balance.should.be.bignumber.equal(expectedTokenAmount);
+      });
 
-    it('should revert if amount is less than minimal contribution', async () => {
-      await assertRevert(crowdsale.sendTransaction({ from: buyer, value: ether(0.19) }));
+      it('should forward funds to wallet', async () => {
+        const pre = web3.eth.getBalance(bank);
+        await crowdsale.buyTokens(buyer, { from: buyer, value });
+        const post = web3.eth.getBalance(bank);
+        post.minus(pre).should.be.bignumber.equal(value);
+      });
+
+      it('should log purchase', async () => {
+        const { logs } = await crowdsale.buyTokens(buyer, { from: buyer, value });
+        const event = logs.find(e => e.event === 'TokenPurchase');
+        should.exist(event);
+        event.args.purchaser.should.equal(buyer);
+        event.args.beneficiary.should.equal(buyer);
+        event.args.value.should.be.bignumber.equal(value);
+        event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
+      });
+
+      it('should revert if amount is less than minimal contribution', async () => {
+        await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value: ether(0.19) }));
+      });
     });
   });
 
-  describe('buyTokens()', () => {
-    it('should accept payments', async () => {
-      await crowdsale.buyTokens(buyer, { from: buyer, value }).should.be.fulfilled;
+  describe('before the Crowdsale start time', () => {
+    const from = buyer;
+
+    describe('hasClosed()', () => {
+      it('returns false', async () => {
+        const closed = await crowdsale.hasClosed({ from });
+        assert.equal(closed, false);
+      });
     });
 
-    it('should assign tokens to beneficiary', async () => {
-      await crowdsale.buyTokens(buyer, { from: buyer2, value });
-      const balance = await token.balanceOf(buyer);
-      balance.should.be.bignumber.equal(expectedTokenAmount);
+    describe('high-level purchase using fallback function', () => {
+      it('reverts', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from, value }));
+      });
     });
 
-    it('should forward funds to wallet', async () => {
-      const pre = web3.eth.getBalance(bank);
-      await crowdsale.buyTokens(buyer, { from: buyer, value });
-      const post = web3.eth.getBalance(bank);
-      post.minus(pre).should.be.bignumber.equal(value);
+    describe('buyTokens()', () => {
+      it('reverts', async () => {
+        await assertRevert(crowdsale.buyTokens(buyer, { from, value }));
+      });
+    });
+  });
+
+  describe('after the Crowdsale end time', () => {
+    const from = buyer;
+
+    beforeEach(async () => {
+      await increaseTimeTo(afterClosingTime);
     });
 
-    it('should log purchase', async () => {
-      const { logs } = await crowdsale.buyTokens(buyer, { from: buyer, value });
-      const event = logs.find(e => e.event === 'TokenPurchase');
-      should.exist(event);
-      event.args.purchaser.should.equal(buyer);
-      event.args.beneficiary.should.equal(buyer);
-      event.args.value.should.be.bignumber.equal(value);
-      event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
+    describe('hasClosed()', () => {
+      it('returns true', async () => {
+        const closed = await crowdsale.hasClosed({ from });
+        assert.equal(closed, true);
+      });
     });
 
-    it('should revert if amount is less than minimal contribution', async () => {
-      await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value: ether(0.19) }));
+    describe('high-level purchase using fallback function', () => {
+      it('reverts', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from, value }));
+      });
+    });
+
+    describe('buyTokens()', () => {
+      it('reverts', async () => {
+        await assertRevert(crowdsale.buyTokens(buyer, { from, value }));
+      });
     });
   });
 
