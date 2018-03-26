@@ -95,7 +95,7 @@ contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, buyer]) => {
       const from = bank;
 
       it('reverts', async () => {
-        await assertRevert(crowdsale.unpause({ from: bank }));
+        await assertRevert(crowdsale.unpause({ from }));
       });
     });
   });
