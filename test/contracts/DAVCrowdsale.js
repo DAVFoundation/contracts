@@ -1,5 +1,6 @@
 const ether = require('../helpers/ether');
 const assertRevert = require('../helpers/assertRevert');
+const { advanceBlock } = require('../helpers/advanceToBlock');
 
 const BigNumber = web3.BigNumber;
 
@@ -19,6 +20,11 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
   let token;
   let crowdsale;
+
+  before(async function () {
+    // Advance to the next block to correctly read time in the solidity "now" function interpreted by testrpc
+    await advanceBlock();
+  });
 
   beforeEach(async () => {
     token = await DAVToken.new();
