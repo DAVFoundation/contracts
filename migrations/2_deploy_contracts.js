@@ -6,5 +6,5 @@ module.exports = async (deployer, network, accounts) => {
   const _rate = 10000;
 
   await deployer.deploy(DAVToken);
-  await deployer.deploy(DAVCrowdsale, _rate, accounts[0], DAVToken.address);
+  await deployer.deploy(DAVCrowdsale, _rate, accounts[0], DAVToken.address, web3.toWei(0.2, 'ether'));
 };

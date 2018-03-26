@@ -1,4 +1,5 @@
 const ether = require('../helpers/ether');
+const assertRevert = require('../helpers/assertRevert');
 
 const BigNumber = web3.BigNumber;
 
@@ -21,7 +22,7 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
   beforeEach(async () => {
     token = await DAVToken.new();
-    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, { from: owner });
+    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), { from: owner });
     await token.transferOwnership(crowdsale.address);
   });
 
@@ -52,6 +53,10 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
       event.args.value.should.be.bignumber.equal(value);
       event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
     });
+
+    it('should revert if amount is less than minimal contribution', async () => {
+      await assertRevert(crowdsale.sendTransaction({ from: buyer, value: ether(0.19) }));
+    });
   });
 
   describe('buyTokens()', () => {
@@ -80,6 +85,10 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
       event.args.beneficiary.should.equal(buyer);
       event.args.value.should.be.bignumber.equal(value);
       event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should revert if amount is less than minimal contribution', async () => {
+      await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value: ether(0.19) }));
     });
   });
 

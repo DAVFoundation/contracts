@@ -10,9 +10,18 @@ import './interfaces/IDAVToken.sol';
  */
 contract DAVCrowdsale is MintedCrowdsale, PausableCrowdsale {
 
-  function DAVCrowdsale(uint256 _rate, address _wallet, IDAVToken _token) public
+  uint256 public minimalContribution;
+
+  function DAVCrowdsale(uint256 _rate, address _wallet, IDAVToken _token, uint256 _minimalContribution) public
     Crowdsale(_rate, _wallet, _token)
   {
+    minimalContribution = _minimalContribution;
+  }
+
+  function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal {
+    super._preValidatePurchase(_beneficiary, _weiAmount);
+    // Verify amount is larger than minimal contribution
+    require(_weiAmount >= minimalContribution);
   }
 
 }

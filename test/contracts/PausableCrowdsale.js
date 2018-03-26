@@ -1,3 +1,4 @@
+const ether = require('../helpers/ether');
 const assertRevert = require('../helpers/assertRevert');
 
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
@@ -15,7 +16,7 @@ contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, buyer]) => {
 
   beforeEach(async () => {
     token = await DAVToken.new();
-    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, { from: owner });
+    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), { from: owner });
     await token.transferOwnership(crowdsale.address);
   });
 
