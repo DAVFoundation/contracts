@@ -32,11 +32,11 @@ contract('DAVToken', function([user1, user2]) {
       assert.equal(secondAccountBalance, totalSupplySetting);
     });
 
-    it('should throw an error when trying to transfer more than balance', async function() {
+    it('should revert when trying to transfer more than balance', async function() {
       await expectThrow(token.transfer(user2, totalSupplySetting + 1));
     });
 
-    it('should throw an error when trying to transfer without approval', async function() {
+    it('should revert when trying to transfer without approval', async function() {
       await expectThrow(token.transferFrom(user2, user1, 1));
     });
   });
@@ -67,13 +67,13 @@ contract('DAVToken', function([user1, user2]) {
       assert.equal(await token.paused(), true);
     });
 
-    it('should throw an error when trying to pause while paused', async function() {
+    it('should revert when trying to pause while paused', async function() {
       await token.pause();
       await expectThrow(token.pause());
       assert.equal(await token.paused(), true);
     });
 
-    it('should throw errors when calling transfer, transferFrom, approve, increaseApproval, or decreaseApproval while paused', async function() {
+    it('should revert when calling transfer, transferFrom, approve, increaseApproval, or decreaseApproval while paused', async function() {
       await token.approve(user1, 2);
       await token.pause();
       await expectThrow(token.transferFrom(user1, user2, 1));
@@ -83,7 +83,7 @@ contract('DAVToken', function([user1, user2]) {
       await expectThrow(token.decreaseApproval(user1, 1));
     });
 
-    it('should throw an error if a non-owner tries to pause', async () => {
+    it('should revert if a non-owner tries to pause', async () => {
       await expectThrow(token.pause({ from: user2 }));
       assert.equal(await token.paused(), false);
     });
@@ -98,12 +98,12 @@ contract('DAVToken', function([user1, user2]) {
       assert.equal(await token.paused(), false);
     });
 
-    it('should throw an error when trying to unpause while not paused', async function() {
+    it('should revert when trying to unpause while not paused', async function() {
       await expectThrow(token.unpause());
       assert.equal(await token.paused(), false);
     });
 
-    it('should throw an error if a non-owner tries to unpause', async () => {
+    it('should revert if a non-owner tries to unpause', async () => {
       await token.pause();
       await expectThrow(token.unpause({ from: user2 }));
       assert.equal(await token.paused(), true);
@@ -139,13 +139,13 @@ contract('DAVToken', function([user1, user2]) {
   describe('burn()', () => {
     xit('should allow a token holder to burn their own tokens');
     xit(
-      'should throw an error when a token holder tries to burn more tokens than they own',
+      'should revert when a token holder tries to burn more tokens than they own',
     );
   });
 
   describe('mint()', () => {
     xit('should allow owner to mint tokens');
-    xit('should throw an error if non-owner tries to mint tokens');
-    xit('should throw an error trying to mint tokens after mintingFinished');
+    xit('should revert if non-owner tries to mint tokens');
+    xit('should revert trying to mint tokens after mintingFinished');
   });
 });
