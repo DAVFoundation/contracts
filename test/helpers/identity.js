@@ -4,7 +4,6 @@ const signMessage = (davId) => {
   const msg = 'DAV Identity Registration';
   const hash = web3.sha3(msg);
   let signature = web3.eth.sign(davId, hash).substr(2);
-  console.log(davId);
   return {
     id: davId,
     r: '0x' + signature.slice(0, 64),

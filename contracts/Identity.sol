@@ -18,14 +18,13 @@ contract Identity {
 
   // Prefix to added to messages signed by web3
   bytes28 private constant ETH_SIGNED_MESSAGE_PREFIX = '\x19Ethereum Signed Message:\n32';
-  bytes25 private constant DAV_REGESTRATION_REQUEST = 'DAV Identity Registration';
-
+  bytes25 private constant DAV_REGISTRATION_REQUEST = 'DAV Identity Registration';
 
   /**
-  * @dev Constructor
-  *
-  * @param _davTokenContract address of the DAVToken contract
-  */
+   * @dev Constructor
+   *
+   * @param _davTokenContract address of the DAVToken contract
+   */
   function Identity(DAVToken _davTokenContract) public {
     token = _davTokenContract;
   }
@@ -36,7 +35,7 @@ contract Identity {
       identities[_id].wallet == 0x0
     );
     // Generate message hash
-    bytes32 prefixedHash = keccak256(ETH_SIGNED_MESSAGE_PREFIX, keccak256(DAV_REGESTRATION_REQUEST));
+    bytes32 prefixedHash = keccak256(ETH_SIGNED_MESSAGE_PREFIX, keccak256(DAV_REGISTRATION_REQUEST));
     // Verify message signature
     require(
       ecrecover(prefixedHash, _v, _r, _s) == _id
