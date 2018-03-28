@@ -41,22 +41,22 @@ contract BasicMission {
   Identity private identity;
 
   /**
-  * @dev Constructor
-  *
-  * @param _identityContract address of the Identity contract
-  * @param _davTokenContract address of the DAVToken contract
-  */
+   * @dev Constructor
+   *
+   * @param _identityContract address of the Identity contract
+   * @param _davTokenContract address of the DAVToken contract
+   */
   function BasicMission(Identity _identityContract, DAVToken _davTokenContract) public {
     identity = _identityContract;
     token = _davTokenContract;
   }
 
   /**
-  * @notice Create a new mission
-  * @param _sellerId The DAV Identity of the person providing the service
-  * @param _buyerId The DAV Identity of the person ordering the service
-  * @param _cost The total cost of the mission to be paid by buyer
-  */
+   * @notice Create a new mission
+   * @param _sellerId The DAV Identity of the person providing the service
+   * @param _buyerId The DAV Identity of the person ordering the service
+   * @param _cost The total cost of the mission to be paid by buyer
+   */
   function create(address _sellerId, address _buyerId, uint256 _cost) public {
     // Verify that message sender controls the buyer's wallet
     require(

@@ -23,14 +23,14 @@ contract('Identity', function(accounts) {
 
     it('isRegistered should return true for registered address', async function() {
       await registerIdentity(IdentityContract, walletAddress);
-      var isRegistered = await IdentityContract.isRegistered.call(sampleIdentities[0].id);
+      const isRegistered = await IdentityContract.isRegistered.call(sampleIdentities[0].id);
       assert.isTrue(
         isRegistered
       );
     });
 
     it('isRegistered should return flase for unregistered address', async function() {
-      var isRegistered = await IdentityContract.isRegistered.call(sampleIdentities[0].id);
+      const isRegistered = await IdentityContract.isRegistered.call(sampleIdentities[0].id);
       assert.isNotTrue(
         isRegistered
       );
@@ -60,7 +60,7 @@ contract('Identity', function(accounts) {
 
   describe('getBalance', () => {
     beforeEach(async function() {
-      return registerIdentity(
+      await registerIdentity(
         IdentityContract, 
         walletAddress, 
         sampleIdentities[1].id,
