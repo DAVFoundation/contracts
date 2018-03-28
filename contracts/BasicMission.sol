@@ -58,10 +58,18 @@ contract BasicMission {
    * @param _cost The total cost of the mission to be paid by buyer
    */
   function create(address _sellerId, address _buyerId, uint256 _cost) public {
-    // Verify that message sender controls the seller's wallet
+    // Verify that message sender controls the buyer's wallet
     require(
-      identity.verifyOwnership(_sellerId, msg.sender)
+      identity.verifyOwnership(_buyerId, msg.sender)
     );
+
+    // Verify buyer's balance is sufficient
+    require(
+      identity.getBalance(_buyerId) >= _cost
+    );
+
+    // Transfer tokens to the mission contract
+    token.transferFrom(msg.sender, this, _cost);
 
     // Create mission
     bytes32 missionId = keccak256('BasicMission', block.number, _sellerId, _buyerId, nonce++);
@@ -69,8 +77,8 @@ contract BasicMission {
       seller: _sellerId,
       buyer: _buyerId,
       cost: _cost,
-      balance: 0,
-      isSigned: false
+      balance: _cost,
+      isSigned: false // TODO: Maybe use to approve fulfillment
     });
 
     // Event
@@ -78,29 +86,19 @@ contract BasicMission {
   }
 
   /**
-   * @notice Fund a mission
-   * @param _missionId The id of the mission
-   * @param _buyerId The DAV Identity of the person ordering the service
-   */
-  function fund(bytes32 _missionId, address _buyerId) public {
+  * @notice Fund a mission
+  * @param _missionId The id of the mission
+  * @param _buyerId The DAV Identity of the person ordering the service
+  */
+  function fulfilled(bytes32 _missionId, address _buyerId) public {
     // Verify that message sender controls the seller's wallet
     require(
       identity.verifyOwnership(_buyerId, msg.sender)
     );
 
-    // Verify buyer's balance is sufficient
-    require(
-      identity.getBalance(_buyerId) >= missions[_missionId].cost
-    );
-
-    // Transfer tokens to the mission contract
-    token.transferFrom(msg.sender, this, missions[_missionId].cost);
-
-    // Update mission balance
-    missions[_missionId].balance = missions[_missionId].cost;
-
     // designate mission as signed
     missions[_missionId].isSigned = true;
+    // TODO: trunsfer funds from mission balance to seller
 
     // Event
     Signed(_missionId);
