@@ -79,17 +79,17 @@ contract('BasicMission', function(accounts) {
     userTokenBalance = await IdentityContract.getBalance.call(user.id);
     assert.equal(userTokenBalance.toNumber(), userAirdropAmount);
 
-    // Vehicles creates new basic mission
-    await BasicMissionContract.create(vehicle.id, user.id, 4, {from: vehicle.wallet});
+    // User funds basic mission and creates new basic mission
+    await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
+    await BasicMissionContract.create(vehicle.id, user.id, 4, {from: user.wallet});
+
+    userTokenBalance = await IdentityContract.getBalance(user.id);
+    assert.equal(userTokenBalance, userAirdropAmount-missionCost);
 
     // Event received (Create)
     const missionId = (await createEvent.get())[0].args.id;
 
-    // User funds basic mission
-    await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
-    await BasicMissionContract.fund(missionId, user.id, {from: user.wallet});
-    userTokenBalance = await IdentityContract.getBalance(user.id);
-    assert.equal(userTokenBalance, userAirdropAmount-missionCost);
+    await BasicMissionContract.fulfilled(missionId, user.id, {from: user.wallet});
 
     // Event received (Signed)
     const events = await signedEvent.get();
@@ -111,10 +111,17 @@ contract('BasicMission', function(accounts) {
   });
 
   describe('create', () => {
+    const missionCost = 4;
+    const userAirdropAmount = 5;
+    beforeEach(async () => {
+      // Airdrop some money to User for testing
+      await TokenContract.transfer(user.wallet, userAirdropAmount);
+      // User funds basic mission and creates new basic mission
+      await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
+    });
+
     it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
-      await BasicMissionContract.create(vehicle.id, user.id, 4, {
-        from: vehicle.wallet,
-      });
+      await BasicMissionContract.create(vehicle.id, user.id, missionCost, {from: user.wallet});
       const events = await createEvent.get();
       assert.equal(events.length, 1);
       assert.typeOf(events[0].args.id, 'string');
@@ -126,7 +133,7 @@ contract('BasicMission', function(accounts) {
     it('should throw if account creating the mission does not control the identity', async () => {
       await expectThrow(
         BasicMissionContract.create(vehicle.id, user.id, 4, {
-          from: user.wallet,
+          from: vehicle.wallet,
         }),
       );
     });
@@ -134,56 +141,40 @@ contract('BasicMission', function(accounts) {
     xit('should fail if cost is negative');
   });
 
-  describe('fund', () => {
+  describe('approve', () => {
     let missionId;
     const missionCost = 4;
+    const userAirdropAmount = 5;
 
     beforeEach(async () => {
-      await BasicMissionContract.create(vehicle.id, user.id, missionCost, {from: vehicle.wallet});
+      // Airdrop some money to User for testing
+      
+      await TokenContract.transfer(user.wallet, userAirdropAmount);
+      await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
+      await BasicMissionContract.create(vehicle.id, user.id, missionCost, {from: user.wallet});
       missionId = (await createEvent.get())[0].args.id;
     });
 
     xit('should set mission as signed', async () => {
-      // Airdrop some money to User for testing
-      const userAirdropAmount = 5;
-      await TokenContract.transfer(user.wallet, userAirdropAmount);
-
-      await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
-      await BasicMissionContract.fund(missionId, user.id, {from: user.wallet});
+      await BasicMissionContract.fulfilled(missionId, user.id, {from: user.wallet});
+      //TODO: chech if mission is signed or remove this test
     });
 
     it('should fire a Signed event', async () => {
-      // Airdrop some money to User for testing
-      const userAirdropAmount = 5;
-      await TokenContract.transfer(user.wallet, userAirdropAmount);
-
-      await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
-      await BasicMissionContract.fund(missionId, user.id, {from: user.wallet});
-
+      await BasicMissionContract.fulfilled(missionId, user.id, {from: user.wallet});
       const events = await signedEvent.get();
       assert.equal(events.length, 1);
       assert.equal(events[0].args.id, missionId);
     });
 
     it('should deduct the cost from the balance of the buyer', async () => {
-      // Airdrop some money to User for testing
-      const userAirdropAmount = 5;
-      await TokenContract.transfer(user.wallet, userAirdropAmount);
-
-      await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
-      await BasicMissionContract.fund(missionId, user.id, {from: user.wallet});
       const userTokenBalance = await IdentityContract.getBalance(user.id);
-      assert.equal(userTokenBalance, userAirdropAmount-missionCost);
+      assert.equal(userTokenBalance, userAirdropAmount - missionCost);
     });
 
-    it('should fail if account funding the mission does not control buyer id', async () => {
-      // Airdrop some money to User for testing
-      const userAirdropAmount = 5;
-      await TokenContract.transfer(user.wallet, userAirdropAmount);
-
-      await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
+    it('should fail if account signing the mission fulfillment does not control buyer id', async () => {
       await expectThrow(
-        BasicMissionContract.fund(missionId, user.id, {from: vehicle.wallet})
+        BasicMissionContract.fulfilled(missionId, user.id, {from: vehicle.wallet})
       );
     });
 

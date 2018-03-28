@@ -48,6 +48,18 @@ contract Identity {
     });
   }
 
+  function registerSimple() public {
+    // Make sure id isn't registered already
+    require(
+      identities[msg.sender].wallet == 0x0
+    );
+
+    // Register in identities mapping
+    identities[msg.sender] = DAVIdentity({
+      wallet: msg.sender
+    });
+  }
+
   function getBalance(address _id) public view returns (uint256 balance) {
     return token.balanceOf(identities[_id].wallet);
   }
