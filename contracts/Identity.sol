@@ -71,4 +71,9 @@ contract Identity {
   function isRegistered(address _id) public view returns (bool) {
     return identities[_id].wallet != 0x0;
   }
+
+  // Get identity wallet
+  function getIdentityWallet(address _id) public view returns (address) {
+    return identities[_id].wallet;
+  }
 }
