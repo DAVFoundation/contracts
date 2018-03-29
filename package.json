@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "solium": "^1.1.5",
+    "truffle-contract": "^3.0.4",
+    "web3": "^0.20.6",
     "zeppelin-solidity": "^1.7.0"
   },
   "devDependencies": {
