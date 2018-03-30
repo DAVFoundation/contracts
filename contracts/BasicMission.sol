@@ -78,7 +78,7 @@ contract BasicMission {
       buyer: _buyerId,
       cost: _cost,
       balance: _cost,
-      isSigned: false // TODO: Maybe use to approve fulfillment
+      isSigned: false
     });
 
     // Event
@@ -95,10 +95,21 @@ contract BasicMission {
     require(
       identity.verifyOwnership(_buyerId, msg.sender)
     );
+    
+    require(
+      missions[_missionId].isSigned == false
+    );
 
+    require(
+      missions[_missionId].balance == missions[_missionId].cost
+    );
+    
+    
     // designate mission as signed
     missions[_missionId].isSigned = true;
-    // TODO: trunsfer funds from mission balance to seller
+    missions[_missionId].balance = 0;
+    token.approve(this, missions[_missionId].cost);
+    token.transferFrom(this, identity.getIdentityWallet(missions[_missionId].seller), missions[_missionId].cost);
 
     // Event
     Signed(_missionId);

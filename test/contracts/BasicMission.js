@@ -96,6 +96,10 @@ contract('BasicMission', function(accounts) {
     assert.equal(events.length, 1);
     assert.equal(events[0].args.id, missionId);
 
+    let vehicleTokenBalance = await IdentityContract.getBalance(vehicle.id);
+    assert.equal(vehicleTokenBalance, missionCost);
+
+
     // Vehicle agrees to resolve mission
 
     // Event received
