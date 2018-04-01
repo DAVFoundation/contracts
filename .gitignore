@@ -3,6 +3,8 @@
 
 # Built files
 /build
+/ropsten
+/rinkeby
 
 # Logs
 npm-debug.log*
