@@ -18,10 +18,10 @@ contract DAVToken is IDAVToken, BurnableToken, PausableToken {
 
   /**
    * @notice DAVToken constructor
-   * Runs once on initial contract creation. Sets total supply and balances.
+   * Runs once on initial contract creation. Sets initial supply and balances.
    */
-  function DAVToken(uint256 _totalSupply) public {
-    totalSupply_ = _totalSupply;
+  function DAVToken(uint256 _initialSupply) public {
+    totalSupply_ = _initialSupply;
     balances[msg.sender] = totalSupply_;
   }
 
