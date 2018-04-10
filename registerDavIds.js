@@ -1,4 +1,4 @@
-
+#!/usr/bin/env node
 const Web3 = require('web3');
 const TruffleContract = require('truffle-contract');
 const IdentityArtifact = require('./build/contracts/Identity.json');
@@ -13,7 +13,7 @@ let register = async function(IdentityContract) {
   let res = await instance.registerSimple({ from: '0x1df62f291b2e969fb0849d99d9ce41e2f137006e' });
   console.log(res);
   res = await instance.registerSimple({ from: '0xaca94ef8bd5ffee41947b4585a84bda5a3d3da6e' });
-  console.log(res); 
+  console.log(res);
 };
 
 let contract = TruffleContract(IdentityArtifact);
