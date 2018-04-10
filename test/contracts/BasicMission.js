@@ -1,6 +1,7 @@
 const Identity = artifacts.require('./Identity.sol');
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
 const BasicMission = artifacts.require('./BasicMission.sol');
+const uuid = require('uuid/v4');
 
 const { registerIdentity, sampleIdentities } = require('../helpers/identity');
 const expectThrow = require('../helpers/expectThrow');
@@ -81,20 +82,25 @@ contract('BasicMission', function(accounts) {
 
     // User funds basic mission and creates new basic mission
     await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
-    await BasicMissionContract.create(vehicle.id, user.id, 4, {from: user.wallet});
+    // generate new unique 128bit id for bid
+    let binaryId = new Array(16);
+    uuid(null, binaryId, 0);
+    let missionId = Buffer.from(binaryId).toString('hex');
+    await BasicMissionContract.create(missionId, vehicle.id, user.id, 4, {from: user.wallet});
 
     userTokenBalance = await IdentityContract.getBalance(user.id);
     assert.equal(userTokenBalance, userAirdropAmount-missionCost);
 
     // Event received (Create)
-    const missionId = (await createEvent.get())[0].args.id;
+    const createdMissionId = (await createEvent.get())[0].args.id;
+    assert.equal(Buffer.from(createdMissionId.substr(2), 'hex').toString(), missionId);
 
     await BasicMissionContract.fulfilled(missionId, user.id, {from: user.wallet});
 
     // Event received (Signed)
     const events = await signedEvent.get();
     assert.equal(events.length, 1);
-    assert.equal(events[0].args.id, missionId);
+    assert.equal(events[0].args.id, '0x' + Buffer.from(missionId).toString('hex'));
 
     let vehicleTokenBalance = await IdentityContract.getBalance(vehicle.id);
     assert.equal(vehicleTokenBalance, missionCost);
@@ -117,26 +123,33 @@ contract('BasicMission', function(accounts) {
   describe('create', () => {
     const missionCost = 4;
     const userAirdropAmount = 5;
+    let missionId;
     beforeEach(async () => {
       // Airdrop some money to User for testing
       await TokenContract.transfer(user.wallet, userAirdropAmount);
       // User funds basic mission and creates new basic mission
       await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
+
+      // generate new unique 128bit id for bid
+      let binaryId = new Array(16);
+      uuid(null, binaryId, 0);
+      missionId = Buffer.from(binaryId).toString('hex');
     });
 
     it('should fire a Create event with the mission id, seller id, and buyer id', async () => {
-      await BasicMissionContract.create(vehicle.id, user.id, missionCost, {from: user.wallet});
+      await BasicMissionContract.create(missionId, vehicle.id, user.id, missionCost, {from: user.wallet});
+
       const events = await createEvent.get();
       assert.equal(events.length, 1);
       assert.typeOf(events[0].args.id, 'string');
-      assert.match(events[0].args.id, /^0x.{64}$/);
+      assert.equal(events[0].args.id, '0x' + Buffer.from(missionId).toString('hex'));
       assert.equal(events[0].args.sellerId, vehicle.id);
       assert.equal(events[0].args.buyerId, user.id);
     });
 
     it('should throw if account creating the mission does not control the identity', async () => {
       await expectThrow(
-        BasicMissionContract.create(vehicle.id, user.id, 4, {
+        BasicMissionContract.create(missionId, vehicle.id, user.id, 4, {
           from: vehicle.wallet,
         }),
       );
@@ -152,11 +165,15 @@ contract('BasicMission', function(accounts) {
 
     beforeEach(async () => {
       // Airdrop some money to User for testing
-      
+      // generate new unique 128bit id for bid
+      let binaryId = new Array(16);
+      uuid(null, binaryId, 0);
+      missionId = Buffer.from(binaryId).toString('hex');
+
       await TokenContract.transfer(user.wallet, userAirdropAmount);
       await TokenContract.approve(BasicMissionContract.address, missionCost, {from: user.wallet});
-      await BasicMissionContract.create(vehicle.id, user.id, missionCost, {from: user.wallet});
-      missionId = (await createEvent.get())[0].args.id;
+      await BasicMissionContract.create(missionId, vehicle.id, user.id, missionCost, {from: user.wallet});
+      // missionId = (await createEvent.get())[0].args.id;
     });
 
     xit('should set mission as signed', async () => {
@@ -167,8 +184,9 @@ contract('BasicMission', function(accounts) {
     it('should fire a Signed event', async () => {
       await BasicMissionContract.fulfilled(missionId, user.id, {from: user.wallet});
       const events = await signedEvent.get();
+      let createdMissionId = events[0].args.id;
       assert.equal(events.length, 1);
-      assert.equal(events[0].args.id, missionId);
+      assert.equal(Buffer.from(createdMissionId.substr(2), 'hex').toString(), missionId);
     });
 
     it('should deduct the cost from the balance of the buyer', async () => {

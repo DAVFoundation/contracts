@@ -18,6 +18,7 @@
     "solium": "^1.1.5",
     "truffle-contract": "^3.0.4",
     "truffle-hdwallet-provider": "0.0.3",
+    "uuid": "^3.2.1",
     "web3": "^0.20.6",
     "zeppelin-solidity": "^1.7.0"
   },

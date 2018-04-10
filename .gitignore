@@ -5,6 +5,7 @@
 /build
 /ropsten
 /rinkeby
+/mainnet
 
 # Logs
 npm-debug.log*
