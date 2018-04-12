@@ -2,7 +2,7 @@ const DAVToken = artifacts.require('./mocks/DAVToken.sol');
 const assertRevert = require('../helpers/assertRevert');
 const totalSupply = 100000;
 
-contract('DAVToken', function([user1, user2]) {
+contract('DAVToken', function([owner, user]) {
   let token;
 
   beforeEach(async () => {
@@ -18,45 +18,45 @@ contract('DAVToken', function([user1, user2]) {
 
   describe('balanceOf()', () => {
     it('should return the correct balance of an account', async function() {
-      let firstAccountBalance = await token.balanceOf(user1);
+      let firstAccountBalance = await token.balanceOf(owner);
       assert.equal(firstAccountBalance, totalSupply);
     });
   });
 
   describe('transfer()', () => {
     it('should transfer from sender when calling transfer()', async function() {
-      await token.transfer(user2, totalSupply);
-      let firstAccountBalance = await token.balanceOf(user1);
-      let secondAccountBalance = await token.balanceOf(user2);
+      await token.transfer(user, totalSupply);
+      let firstAccountBalance = await token.balanceOf(owner);
+      let secondAccountBalance = await token.balanceOf(user);
       assert.equal(firstAccountBalance, 0);
       assert.equal(secondAccountBalance, totalSupply);
     });
 
     it('should revert when trying to transfer more than balance', async function() {
-      await assertRevert(token.transfer(user2, totalSupply + 1));
+      await assertRevert(token.transfer(user, totalSupply + 1));
     });
 
     it('should revert when trying to transfer without approval', async function() {
-      await assertRevert(token.transferFrom(user2, user1, 1));
+      await assertRevert(token.transferFrom(user, owner, 1));
     });
   });
 
   describe('approve()', () => {
     it('should allow to transfer with transferFrom after approval but no more than approved amount', async function() {
-      await token.approve(user1, 2);
-      await token.transferFrom(user1, user2, 1);
-      await token.transferFrom(user1, user2, 1);
-      await assertRevert(token.transferFrom(user1, user2, 1));
+      await token.approve(owner, 2);
+      await token.transferFrom(owner, user, 1);
+      await token.transferFrom(owner, user, 1);
+      await assertRevert(token.transferFrom(owner, user, 1));
     });
   });
 
   describe('allowance()', () => {
     it('should return the correct allowance of an account to another', async function() {
-      assert.equal(await token.allowance(user1, user1), 0);
-      await token.approve(user1, 1);
-      assert.equal(await token.allowance(user1, user1), 1);
-      await token.transferFrom(user1, user2, 1);
-      assert.equal(await token.allowance(user1, user1), 0);
+      assert.equal(await token.allowance(owner, owner), 0);
+      await token.approve(owner, 1);
+      assert.equal(await token.allowance(owner, owner), 1);
+      await token.transferFrom(owner, user, 1);
+      assert.equal(await token.allowance(owner, owner), 0);
     });
   });
 
@@ -74,17 +74,18 @@ contract('DAVToken', function([user1, user2]) {
     });
 
     it('should revert when calling transfer, transferFrom, approve, increaseApproval, or decreaseApproval while paused', async function() {
-      await token.approve(user1, 2);
+      const from = user;
+      await token.approve(owner, 2, { from });
       await token.pause();
-      await assertRevert(token.transferFrom(user1, user2, 1));
-      await assertRevert(token.transfer(user2, 1));
-      await assertRevert(token.approve(user1, 2));
-      await assertRevert(token.increaseApproval(user1, 1));
-      await assertRevert(token.decreaseApproval(user1, 1));
+      await assertRevert(token.transferFrom(owner, user, 1, { from }));
+      await assertRevert(token.transfer(user, 1, { from }));
+      await assertRevert(token.approve(owner, 2, { from }));
+      await assertRevert(token.increaseApproval(owner, 1, { from }));
+      await assertRevert(token.decreaseApproval(owner, 1, { from }));
     });
 
     it('should revert if a non-owner tries to pause', async () => {
-      await assertRevert(token.pause({ from: user2 }));
+      await assertRevert(token.pause({ from: user }));
       assert.equal(await token.paused(), false);
     });
   });
@@ -105,29 +106,29 @@ contract('DAVToken', function([user1, user2]) {
 
     it('should revert if a non-owner tries to unpause', async () => {
       await token.pause();
-      await assertRevert(token.unpause({ from: user2 }));
+      await assertRevert(token.unpause({ from: user }));
       assert.equal(await token.paused(), true);
     });
   });
 
   describe('increaseApproval()', () => {
     it('should allow increasing the allowance with increaseApproval', async function() {
-      await token.increaseApproval(user1, 1);
-      assert.equal(await token.allowance(user1, user1), 1);
+      await token.increaseApproval(owner, 1);
+      assert.equal(await token.allowance(owner, owner), 1);
     });
   });
 
   describe('decreaseApproval()', () => {
     it('should allow decreasing the allowance with decreaseApproval', async function() {
-      await token.approve(user1, 5);
-      await token.decreaseApproval(user1, 1);
-      assert.equal(await token.allowance(user1, user1), 4);
+      await token.approve(owner, 5);
+      await token.decreaseApproval(owner, 1);
+      assert.equal(await token.allowance(owner, owner), 4);
     });
 
     it('should set approved amount to 0 if trying to decreaseApproval to below 0', async function() {
-      await token.approve(user1, 1);
-      await token.decreaseApproval(user1, 2);
-      assert.equal(await token.allowance(user1, user1), 0);
+      await token.approve(owner, 1);
+      await token.decreaseApproval(owner, 2);
+      assert.equal(await token.allowance(owner, owner), 0);
     });
   });
 
