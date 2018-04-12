@@ -2,14 +2,14 @@ pragma solidity ^0.4.18;
 
 import './interfaces/IDAVToken.sol';
 import 'zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
-import 'zeppelin-solidity/contracts/token/ERC20/PausableToken.sol';
+import './OwnedPausableToken.sol';
 
 
 /**
  * @title DAV Token
  * @dev ERC20 token
  */
-contract DAVToken is IDAVToken, BurnableToken, PausableToken {
+contract DAVToken is IDAVToken, BurnableToken, OwnedPausableToken {
 
   // Token constants
   string public name = 'DAV Token';

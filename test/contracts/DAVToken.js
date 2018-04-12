@@ -84,6 +84,25 @@ contract('DAVToken', function([owner, user]) {
       await assertRevert(token.decreaseApproval(owner, 1, { from }));
     });
 
+    it('should not revert when owner calls transfer while paused', async function() {
+      const from = owner;
+      await token.pause();
+      await token.transfer(user, totalSupply, { from });
+      let firstAccountBalance = await token.balanceOf(owner);
+      let secondAccountBalance = await token.balanceOf(user);
+      assert.equal(firstAccountBalance, 0);
+      assert.equal(secondAccountBalance, totalSupply);
+    });
+
+    it('should revert when owner calls transferFrom, approve, increaseApproval, or decreaseApproval while paused', async function() {
+      const from = owner;
+      await token.pause();
+      await assertRevert(token.transferFrom(owner, user, 1, { from }));
+      await assertRevert(token.approve(owner, 2, { from }));
+      await assertRevert(token.increaseApproval(owner, 1, { from }));
+      await assertRevert(token.decreaseApproval(owner, 1, { from }));
+    });
+
     it('should revert if a non-owner tries to pause', async () => {
       await assertRevert(token.pause({ from: user }));
       assert.equal(await token.paused(), false);
