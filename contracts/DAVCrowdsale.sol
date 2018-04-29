@@ -21,7 +21,7 @@ contract DAVCrowdsale is PausableCrowdsale, TimedCrowdsale {
 
   function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal {
     super._preValidatePurchase(_beneficiary, _weiAmount);
-    // Verify amount is larger than minimal contribution
+    // Verify amount is larger than or equal to minimal contribution
     require(_weiAmount >= minimalContribution);
   }
 
