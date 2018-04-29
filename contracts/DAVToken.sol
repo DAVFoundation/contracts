@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 import './interfaces/IDAVToken.sol';
-import 'zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
 import './OwnedPausableToken.sol';
 
 

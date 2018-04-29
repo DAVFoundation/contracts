@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 import './PausableCrowdsale.sol';
-import 'zeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol';
+import 'openzeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol';
 import './interfaces/IDAVToken.sol';
 
 /**

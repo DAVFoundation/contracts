@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/crowdsale/Crowdsale.sol';
-import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
+import 'openzeppelin-solidity/contracts/crowdsale/Crowdsale.sol';
+import 'openzeppelin-solidity/contracts/lifecycle/Pausable.sol';
 
 
 /**
