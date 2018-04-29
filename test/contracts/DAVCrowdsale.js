@@ -84,6 +84,11 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
       it('should revert if gas price is over 50 gwei', async () => {
         await assertRevert(crowdsale.sendTransaction({ from: buyer, value, gasPrice: web3.toWei(50.1, 'gwei') }));
       });
+
+      it('should be able to complete with the max gas and max gas price', async () => {
+        await crowdsale.sendTransaction({ from: buyer, value, gasPrice: web3.toWei(50, 'gwei'), gas: 300000 }).should.be.fulfilled;
+      });
+
     });
 
     describe('buyTokens()', () => {
@@ -120,6 +125,10 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
       it('should revert if gas price is over 50 gwei', async () => {
         await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value, gasPrice: web3.toWei(50.1, 'gwei') }));
+      });
+
+      it('should be able to complete with the max gas and max gas price', async () => {
+        await crowdsale.buyTokens(buyer, { from: buyer, value, gasPrice: web3.toWei(50, 'gwei'), gas: 300000 }).should.be.fulfilled;
       });
 
     });
