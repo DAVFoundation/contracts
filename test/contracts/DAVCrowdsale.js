@@ -80,6 +80,10 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
       it('should revert if amount is less than minimal contribution', async () => {
         await assertRevert(crowdsale.sendTransaction({ from: buyer, value: ether(0.19) }));
       });
+
+      it('should revert if gas price is over 50 gwei', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from: buyer, value, gasPrice: web3.toWei(50.1, 'gwei') }));
+      });
     });
 
     describe('buyTokens()', () => {
@@ -113,6 +117,11 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
       it('should revert if amount is less than minimal contribution', async () => {
         await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value: ether(0.19) }));
       });
+
+      it('should revert if gas price is over 50 gwei', async () => {
+        await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value, gasPrice: web3.toWei(50.1, 'gwei') }));
+      });
+
     });
   });
 
