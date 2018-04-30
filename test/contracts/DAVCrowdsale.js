@@ -14,7 +14,7 @@ const should = require('chai')
 const DAVToken = artifacts.require('./DAVToken.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
+contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB]) => {
 
   const totalSupply = new BigNumber('1e22');
   const crowdsaleSupply = totalSupply.mul(0.4);
@@ -51,91 +51,91 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
     describe('high-level purchase using fallback function', () => {
       it('should accept payments', async () => {
-        await crowdsale.sendTransaction({ from: buyer, value }).should.be.fulfilled;
+        await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
       });
 
       it('should assign tokens to sender', async () => {
-        await crowdsale.sendTransaction({ from: buyer, value });
-        const balance = await token.balanceOf(buyer);
+        await crowdsale.sendTransaction({ from: buyerA, value });
+        const balance = await token.balanceOf(buyerA);
         balance.should.be.bignumber.equal(expectedTokenAmount);
       });
 
       it('should forward funds to wallet', async () => {
         const pre = web3.eth.getBalance(bank);
-        await crowdsale.sendTransaction({ from: buyer, value });
+        await crowdsale.sendTransaction({ from: buyerA, value });
         const post = web3.eth.getBalance(bank);
         post.minus(pre).should.be.bignumber.equal(value);
       });
 
       it('should log purchase', async () => {
-        const { logs } = await crowdsale.sendTransaction({ from: buyer, value });
+        const { logs } = await crowdsale.sendTransaction({ from: buyerA, value });
         const event = logs.find(e => e.event === 'TokenPurchase');
         should.exist(event);
-        event.args.purchaser.should.equal(buyer);
-        event.args.beneficiary.should.equal(buyer);
+        event.args.purchaser.should.equal(buyerA);
+        event.args.beneficiary.should.equal(buyerA);
         event.args.value.should.be.bignumber.equal(value);
         event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
       });
 
       it('should revert if amount is less than minimal contribution', async () => {
-        await assertRevert(crowdsale.sendTransaction({ from: buyer, value: ether(0.19) }));
+        await assertRevert(crowdsale.sendTransaction({ from: buyerA, value: ether(0.19) }));
       });
 
       it('should revert if gas price is over 50 gwei', async () => {
-        await assertRevert(crowdsale.sendTransaction({ from: buyer, value, gasPrice: web3.toWei(50.1, 'gwei') }));
+        await assertRevert(crowdsale.sendTransaction({ from: buyerA, value, gasPrice: web3.toWei(50.1, 'gwei') }));
       });
 
       it('should be able to complete with the max gas and max gas price', async () => {
-        await crowdsale.sendTransaction({ from: buyer, value, gasPrice: web3.toWei(50, 'gwei'), gas: 300000 }).should.be.fulfilled;
+        await crowdsale.sendTransaction({ from: buyerA, value, gasPrice: web3.toWei(50, 'gwei'), gas: 300000 }).should.be.fulfilled;
       });
 
     });
 
     describe('buyTokens()', () => {
       it('should accept payments', async () => {
-        await crowdsale.buyTokens(buyer, { from: buyer, value }).should.be.fulfilled;
+        await crowdsale.buyTokens(buyerA, { from: buyerA, value }).should.be.fulfilled;
       });
 
       it('should assign tokens to beneficiary', async () => {
-        await crowdsale.buyTokens(buyer, { from: buyer2, value });
-        const balance = await token.balanceOf(buyer);
+        await crowdsale.buyTokens(buyerB, { from: buyerA, value });
+        const balance = await token.balanceOf(buyerB);
         balance.should.be.bignumber.equal(expectedTokenAmount);
       });
 
       it('should forward funds to wallet', async () => {
         const pre = web3.eth.getBalance(bank);
-        await crowdsale.buyTokens(buyer, { from: buyer, value });
+        await crowdsale.buyTokens(buyerA, { from: buyerA, value });
         const post = web3.eth.getBalance(bank);
         post.minus(pre).should.be.bignumber.equal(value);
       });
 
       it('should log purchase', async () => {
-        const { logs } = await crowdsale.buyTokens(buyer, { from: buyer, value });
+        const { logs } = await crowdsale.buyTokens(buyerA, { from: buyerA, value });
         const event = logs.find(e => e.event === 'TokenPurchase');
         should.exist(event);
-        event.args.purchaser.should.equal(buyer);
-        event.args.beneficiary.should.equal(buyer);
+        event.args.purchaser.should.equal(buyerA);
+        event.args.beneficiary.should.equal(buyerA);
         event.args.value.should.be.bignumber.equal(value);
         event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
       });
 
       it('should revert if amount is less than minimal contribution', async () => {
-        await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value: ether(0.19) }));
+        await assertRevert(crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.19) }));
       });
 
       it('should revert if gas price is over 50 gwei', async () => {
-        await assertRevert(crowdsale.buyTokens(buyer, { from: buyer, value, gasPrice: web3.toWei(50.1, 'gwei') }));
+        await assertRevert(crowdsale.buyTokens(buyerA, { from: buyerA, value, gasPrice: web3.toWei(50.1, 'gwei') }));
       });
 
       it('should be able to complete with the max gas and max gas price', async () => {
-        await crowdsale.buyTokens(buyer, { from: buyer, value, gasPrice: web3.toWei(50, 'gwei'), gas: 300000 }).should.be.fulfilled;
+        await crowdsale.buyTokens(buyerA, { from: buyerA, value, gasPrice: web3.toWei(50, 'gwei'), gas: 300000 }).should.be.fulfilled;
       });
 
     });
   });
 
   describe('before the Crowdsale start time', () => {
-    const from = buyer;
+    const from = buyerA;
 
     describe('hasClosed()', () => {
       it('returns false', async () => {
@@ -152,13 +152,13 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
     describe('buyTokens()', () => {
       it('reverts', async () => {
-        await assertRevert(crowdsale.buyTokens(buyer, { from, value }));
+        await assertRevert(crowdsale.buyTokens(buyerA, { from, value }));
       });
     });
   });
 
   describe('after the Crowdsale end time', () => {
-    const from = buyer;
+    const from = buyerA;
 
     beforeEach(async () => {
       await increaseTimeTo(afterClosingTime);
@@ -179,7 +179,7 @@ contract('DAVCrowdsale', ([owner, bank, buyer, buyer2]) => {
 
     describe('buyTokens()', () => {
       it('reverts', async () => {
-        await assertRevert(crowdsale.buyTokens(buyer, { from, value }));
+        await assertRevert(crowdsale.buyTokens(buyerA, { from, value }));
       });
     });
   });
