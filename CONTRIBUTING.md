@@ -22,7 +22,7 @@ A lot of **contracts** functionality came from pull requests sent by the develop
 - [x] In the console run `docker network create dav`. This simply creates a link between different docker projects, allowing them to communicate (similar to a symlink).
 - [x] Run `make build` to build the project 
 - [x] Run `make start` to run the project 
-- [x] At this point you might consider also setting up the [Missions](https://github.com/DAVFoundation/missions/blob/master/CONTRIBUTING.md) project, and set the build symlinks at missions project, to point your build directory at contructs project, with `ln -sf /path/to/contructs/build /path/to/missions/src/build`.
+- [x] At this point you might consider also setting up the [Missions](https://github.com/DAVFoundation/missions/blob/master/CONTRIBUTING.md) project.
 - [x] Now, code, code, code.
 - [x] Commit your local changes by using `$ git commit -m "nice detailed message here..."`
 - [x] Once you've made sure all your changes work correctly and have been committed, push your local changes back to github with `$ git push -u origin master`.
