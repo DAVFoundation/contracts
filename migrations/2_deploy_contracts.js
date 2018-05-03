@@ -8,10 +8,12 @@ module.exports = async (deployer, network, [bank]) => {
   const rate = 10000;
   // Minimal acceptable contribution amount
   const minimalContribution = web3.toWei(0.2, 'ether');
+  const maximalIndividualContribution = web3.toWei(150, 'ether');
   // Sale time
   const openingTime = Date.parse('11 June 2018 13:00:00 GMT')/1000;
+  const openingTimeB = Date.parse('11 June 2018 18:00:00 GMT')/1000;
   const closingTime = Date.parse('25 June 2018 13:00:00 GMT')/1000;
 
   await deployer.deploy(DAVToken, totalSupply);
-  await deployer.deploy(DAVCrowdsale, rate, bank, DAVToken.address, minimalContribution, openingTime, closingTime);
+  await deployer.deploy(DAVCrowdsale, rate, bank, DAVToken.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime);
 };

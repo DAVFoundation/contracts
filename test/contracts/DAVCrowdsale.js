@@ -14,17 +14,20 @@ const should = require('chai')
 const DAVToken = artifacts.require('./DAVToken.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB]) => {
+contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB, buyerUnknown]) => {
 
   const totalSupply = new BigNumber('1e22');
   const crowdsaleSupply = totalSupply.mul(0.4);
   const rate = new BigNumber(10000);
+  const minimalContribution = ether(0.2);
+  const maximalIndividualContribution = ether(0.5);
   const value = ether(0.2);
   const expectedTokenAmount = rate.mul(value);
 
   let token;
   let crowdsale;
   let openingTime;
+  let openingTimeB;
   let closingTime;
   let afterClosingTime;
 
@@ -35,14 +38,17 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB]) => {
 
   beforeEach(async () => {
     openingTime = latestTime() + duration.weeks(1);
+    openingTimeB = openingTime + duration.hours(5);
     closingTime = openingTime + duration.weeks(1);
     afterClosingTime = closingTime + duration.seconds(1);
     token = await DAVToken.new(totalSupply);
-    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, ether(0.2), openingTime, closingTime, {from: owner});
+    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
     await token.transfer(crowdsale.address, crowdsaleSupply);
+    crowdsale.whitelistUsersA([buyerA]);
+    crowdsale.whitelistUsersB([buyerB]);
   });
 
-  describe('between the Crowdsale start and end times', () => {
+  describe('between the Crowdsale start time and Whitelist B start time', () => {
 
     beforeEach(async () => {
       await increaseTimeTo(openingTime);
@@ -77,8 +83,28 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB]) => {
         event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
       });
 
+      it('should accept payments from users in whitelist A', async () => {
+        await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+      });
+
+      it('should revert if user is in whitelist b', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from: buyerB, value }));
+      });
+
+      it('should revert if user is not whitelisted', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from: buyerUnknown, value }));
+      });
+
       it('should revert if amount is less than minimal contribution', async () => {
         await assertRevert(crowdsale.sendTransaction({ from: buyerA, value: ether(0.19) }));
+      });
+
+      it('should revert if total amount contributed is greater than maximal contribution cap', async () => {
+        await crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }).should.be.fulfilled;
+        await crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }).should.be.fulfilled;
+        await assertRevert(crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }));
+        const balance = await token.balanceOf(buyerA);
+        balance.should.be.bignumber.equal(rate.mul(ether(0.4)));
       });
 
       it('should revert if gas price is over 50 gwei', async () => {
@@ -97,8 +123,8 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB]) => {
       });
 
       it('should assign tokens to beneficiary', async () => {
-        await crowdsale.buyTokens(buyerB, { from: buyerA, value });
-        const balance = await token.balanceOf(buyerB);
+        await crowdsale.buyTokens(buyerA, { from: buyerB, value });
+        const balance = await token.balanceOf(buyerA);
         balance.should.be.bignumber.equal(expectedTokenAmount);
       });
 
@@ -119,8 +145,28 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB]) => {
         event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
       });
 
+      it('should accept payments from users in whitelist A', async () => {
+        await crowdsale.buyTokens(buyerA, { from: buyerB, value }).should.be.fulfilled;
+      });
+
+      it('should revert if user is in whitelist b', async () => {
+        await assertRevert(crowdsale.buyTokens(buyerB, { from: buyerB, value }));
+      });
+
+      it('should revert if user is not whitelisted', async () => {
+        await assertRevert(crowdsale.buyTokens(buyerUnknown, { from: buyerB, value }));
+      });
+
       it('should revert if amount is less than minimal contribution', async () => {
         await assertRevert(crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.19) }));
+      });
+
+      it('should revert if total amount contributed is greater than maximal contribution cap', async () => {
+        await crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.2) }).should.be.fulfilled;
+        await crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.2) }).should.be.fulfilled;
+        await assertRevert(crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.2) }));
+        const balance = await token.balanceOf(buyerA);
+        balance.should.be.bignumber.equal(rate.mul(ether(0.4)));
       });
 
       it('should revert if gas price is over 50 gwei', async () => {
@@ -132,6 +178,43 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB]) => {
       });
 
     });
+  });
+
+  describe('between Whitelist B start and crowdsale end time', () => {
+
+    beforeEach(async () => {
+      await increaseTimeTo(openingTimeB);
+      await advanceBlock();
+    });
+
+    describe('high-level purchase using fallback function', () => {
+      it('should accept payments from users in whitelist A', async () => {
+        await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+      });
+
+      it('should accept payments from users in whitelist B', async () => {
+        await crowdsale.sendTransaction({ from: buyerB, value }).should.be.fulfilled;
+      });
+
+      it('should revert if user is not whitelisted', async () => {
+        await assertRevert(crowdsale.sendTransaction({ from: buyerUnknown, value }));
+      });
+    });
+
+    describe('buyTokens()', () => {
+      it('should accept payments from users in whitelist A', async () => {
+        await crowdsale.buyTokens(buyerA, { from: buyerA, value }).should.be.fulfilled;
+      });
+
+      it('should accept payments from users in whitelist B', async () => {
+        await crowdsale.buyTokens(buyerB, { from: buyerB, value }).should.be.fulfilled;
+      });
+
+      it('should revert if user is not whitelisted', async () => {
+        await assertRevert(crowdsale.buyTokens(buyerUnknown, { from: buyerA, value }));
+      });
+    });
+
   });
 
   describe('before the Crowdsale start time', () => {
