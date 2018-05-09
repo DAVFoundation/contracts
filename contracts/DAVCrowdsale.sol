@@ -1,14 +1,14 @@
 pragma solidity ^0.4.18;
 
 import './PausableCrowdsale.sol';
-import 'openzeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol';
+import 'openzeppelin-solidity/contracts/crowdsale/distribution/FinalizableCrowdsale.sol';
 import './interfaces/IDAVToken.sol';
 
 /**
  * @title DAVCrowdsale
  * @dev DAV Crowdsale contract
  */
-contract DAVCrowdsale is PausableCrowdsale, TimedCrowdsale {
+contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
 
   // Opening time for Whitelist B
   uint256 public openingTimeB;
@@ -73,6 +73,10 @@ contract DAVCrowdsale is PausableCrowdsale, TimedCrowdsale {
     super._updatePurchasingState(_beneficiary, _weiAmount);
     // Update user contribution total
     contributions[_beneficiary] = contributions[_beneficiary].add(_weiAmount);
+  }
+
+  function finalization() internal {
+    super.finalization();
   }
 
 }

@@ -178,6 +178,20 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB, buyerUnknown]) => {
       });
 
     });
+
+    describe('isFinalized()', () => {
+      it('should be false', async () => {
+        const finalized = await crowdsale.isFinalized();
+        finalized.should.be.false;
+      });
+    });
+
+    describe('finalize()', () => {
+      it('should revert', async () => {
+        await assertRevert(crowdsale.finalize({ from: owner }));
+      });
+    });
+
   });
 
   describe('between Whitelist B start and crowdsale end time', () => {
@@ -238,6 +252,20 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB, buyerUnknown]) => {
         await assertRevert(crowdsale.buyTokens(buyerA, { from, value }));
       });
     });
+
+    describe('isFinalized()', () => {
+      it('should be false', async () => {
+        const finalized = await crowdsale.isFinalized();
+        finalized.should.be.false;
+      });
+    });
+
+    describe('finalize()', () => {
+      it('should revert', async () => {
+        await assertRevert(crowdsale.finalize({ from: owner }));
+      });
+    });
+
   });
 
   describe('after the Crowdsale end time', () => {
@@ -265,6 +293,26 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB, buyerUnknown]) => {
         await assertRevert(crowdsale.buyTokens(buyerA, { from, value }));
       });
     });
+
+    describe('isFinalized()', () => {
+      it('should be false', async () => {
+        const finalized = await crowdsale.isFinalized();
+        finalized.should.be.false;
+      });
+    });
+
+    describe('finalize()', () => {
+      it('should not revert', async () => {
+        await crowdsale.finalize({ from: owner }).should.be.fulfilled;
+      });
+    });
+
+    it('should emit a Finalized event', async () => {
+      const { logs } = await crowdsale.finalize({ from: owner });
+      const event = logs.find(e => e.event === 'Finalized');
+      should.exist(event);
+    });
+
   });
 
 });
