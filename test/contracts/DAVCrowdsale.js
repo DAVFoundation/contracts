@@ -14,7 +14,7 @@ const should = require('chai')
 const DAVToken = artifacts.require('./DAVToken.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB, buyerUnknown]) => {
+contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown]) => {
 
   const totalSupply = new BigNumber('1e22');
   const crowdsaleSupply = totalSupply.mul(0.4);
@@ -43,12 +43,18 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB, buyerUnknown]) => {
     afterClosingTime = closingTime + duration.seconds(1);
 
     token = await DAVToken.new(totalSupply);
-    crowdsale = await DAVCrowdsale.new(rate, bank, token.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
+    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
     await token.transfer(crowdsale.address, crowdsaleSupply);
     await token.pause();
     await token.transferOwnership(crowdsale.address);
     crowdsale.whitelistUsersA([buyerA]);
     crowdsale.whitelistUsersB([buyerB]);
+  });
+
+  describe('tokenWallet()', () => {
+    it('should contain the foundation address', async () => {
+      (await crowdsale.tokenWallet()).should.equal(foundation);
+    });
   });
 
   describe('between the Crowdsale start time and Whitelist B start time', () => {

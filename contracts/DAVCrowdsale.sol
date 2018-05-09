@@ -24,8 +24,10 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   uint256 public maximalIndividualContribution;
   // Maximal acceptable gas price
   uint256 public constant MAX_GAS_PRICE = 50000000000 wei;
+  // Wallet to transfer foundation tokens to
+  address public tokenWallet;
 
-  function DAVCrowdsale(uint256 _rate, address _wallet, IDAVToken _token, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
+  function DAVCrowdsale(uint256 _rate, address _wallet, address _tokenWallet, IDAVToken _token, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
     Crowdsale(_rate, _wallet, _token)
     TimedCrowdsale(_openingTime, _closingTime)
   {
@@ -37,6 +39,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     minimalContribution = _minimalContribution;
     maximalIndividualContribution = _maximalIndividualContribution;
     openingTimeB = _openingTimeB;
+    tokenWallet = _tokenWallet;
   }
 
   /**
