@@ -29,7 +29,11 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     Crowdsale(_rate, _wallet, _token)
     TimedCrowdsale(_openingTime, _closingTime)
   {
-    require(_openingTimeB >= _openingTime && _openingTimeB <= _closingTime);
+    require(_openingTimeB >= _openingTime);
+    require(_openingTimeB <= _closingTime);
+    require(_minimalContribution > 0);
+    require(_maximalIndividualContribution > 0);
+    require(_minimalContribution <= _maximalIndividualContribution);
     minimalContribution = _minimalContribution;
     maximalIndividualContribution = _maximalIndividualContribution;
     openingTimeB = _openingTimeB;
