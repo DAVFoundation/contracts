@@ -41,9 +41,12 @@ contract('DAVCrowdsale', ([owner, bank, buyerA, buyerB, buyerUnknown]) => {
     openingTimeB = openingTime + duration.hours(5);
     closingTime = openingTime + duration.weeks(1);
     afterClosingTime = closingTime + duration.seconds(1);
+
     token = await DAVToken.new(totalSupply);
     crowdsale = await DAVCrowdsale.new(rate, bank, token.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
     await token.transfer(crowdsale.address, crowdsaleSupply);
+    await token.pause();
+    await token.transferOwnership(crowdsale.address);
     crowdsale.whitelistUsersA([buyerA]);
     crowdsale.whitelistUsersB([buyerB]);
   });
