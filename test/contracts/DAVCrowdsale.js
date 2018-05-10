@@ -324,4 +324,26 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
 
   });
 
+  describe('after the Crowdsale is finalized', () => {
+    let finalizeLogs;
+
+    beforeEach(async () => {
+      await increaseTimeTo(afterClosingTime);
+      finalizeLogs = (await crowdsale.finalize({ from: owner })).logs;
+    });
+
+    it('should transfer token ownership back to original owner', async () => {
+      const event = finalizeLogs.find(e => e.event === 'OwnershipTransferred');
+      should.exist(event);
+      event.args.previousOwner.should.equal(crowdsale.address);
+      event.args.newOwner.should.equal(owner);
+    });
+
+    it('token should be unpausable by original owner', async () => {
+      const unpauseLogs = (await token.unpause({ from: owner })).logs;
+      const event = unpauseLogs.find(e => e.event === 'Unpause');
+      should.exist(event);
+    });
+  });
+
 });
