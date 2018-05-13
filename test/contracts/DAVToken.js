@@ -41,7 +41,7 @@ contract('DAVToken', function([owner, user]) {
     });
 
     it('should revert when trying to transfer more than balance', async function() {
-      await assertRevert(token.transfer(user, totalSupply + 1));
+      await assertRevert(token.transfer(user, totalSupply.add(1)));
     });
 
     it('should revert when trying to transfer without approval', async function() {
@@ -98,8 +98,8 @@ contract('DAVToken', function([owner, user]) {
       await token.transfer(user, totalSupply, { from });
       let firstAccountBalance = await token.balanceOf(owner);
       let secondAccountBalance = await token.balanceOf(user);
-      assert.equal(firstAccountBalance, 0);
-      assert.equal(secondAccountBalance, totalSupply);
+      firstAccountBalance.should.be.bignumber.equal(0);
+      secondAccountBalance.should.be.bignumber.equal(totalSupply);
     });
 
     it('should revert when owner calls transferFrom, approve, increaseApproval, or decreaseApproval while paused', async function() {
