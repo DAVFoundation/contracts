@@ -18,7 +18,6 @@ const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown]) => {
 
   const totalSupply = dav(10000);
-  const crowdsaleSupply = totalSupply.mul(0.4);
   const rate = new BigNumber(10000);
   const minimalContribution = ether(0.2);
   const maximalIndividualContribution = ether(0.5);
