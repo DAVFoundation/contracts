@@ -53,7 +53,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
   });
 
   describe('tokenWallet()', () => {
-    it('should contain the foundation address', async () => {
+    it('should return the foundation address', async () => {
       (await crowdsale.tokenWallet()).should.equal(foundation);
     });
   });
