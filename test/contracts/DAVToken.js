@@ -2,6 +2,13 @@ const DAVToken = artifacts.require('./mocks/DAVToken.sol');
 const assertRevert = require('../helpers/assertRevert');
 const totalSupply = 100000;
 
+const BigNumber = web3.BigNumber;
+
+const should = require('chai')
+  .use(require('chai-as-promised'))
+  .use(require('chai-bignumber')(BigNumber))
+  .should();
+
 contract('DAVToken', function([owner, user]) {
   let token;
 
@@ -12,14 +19,15 @@ contract('DAVToken', function([owner, user]) {
   describe('totalSupply()', () => {
     it('should return the correct total supply after construction', async function() {
       const totalSupplyReturned = await token.totalSupply();
-      assert.equal(totalSupplyReturned, totalSupply);
+      totalSupply.should.be.bignumber.equal(100000);
+      totalSupplyReturned.should.be.bignumber.equal(totalSupply);
     });
   });
 
   describe('balanceOf()', () => {
     it('should return the correct balance of an account', async function() {
       let firstAccountBalance = await token.balanceOf(owner);
-      assert.equal(firstAccountBalance, totalSupply);
+      firstAccountBalance.should.be.bignumber.equal(totalSupply);
     });
   });
 
@@ -28,8 +36,8 @@ contract('DAVToken', function([owner, user]) {
       await token.transfer(user, totalSupply);
       let firstAccountBalance = await token.balanceOf(owner);
       let secondAccountBalance = await token.balanceOf(user);
-      assert.equal(firstAccountBalance, 0);
-      assert.equal(secondAccountBalance, totalSupply);
+      firstAccountBalance.should.be.bignumber.equal(0);
+      secondAccountBalance.should.be.bignumber.equal(totalSupply);
     });
 
     it('should revert when trying to transfer more than balance', async function() {
@@ -52,25 +60,25 @@ contract('DAVToken', function([owner, user]) {
 
   describe('allowance()', () => {
     it('should return the correct allowance of an account to another', async function() {
-      assert.equal(await token.allowance(owner, owner), 0);
+      (await token.allowance(owner, owner)).should.be.bignumber.equal(0);
       await token.approve(owner, 1);
-      assert.equal(await token.allowance(owner, owner), 1);
+      (await token.allowance(owner, owner)).should.be.bignumber.equal(1);
       await token.transferFrom(owner, user, 1);
-      assert.equal(await token.allowance(owner, owner), 0);
+      (await token.allowance(owner, owner)).should.be.bignumber.equal(0);
     });
   });
 
   describe('pause()', () => {
     it('should be callable by owner and modify pause state', async function() {
-      assert.equal(await token.paused(), false);
+      (await token.paused()).should.be.false;
       await token.pause();
-      assert.equal(await token.paused(), true);
+      (await token.paused()).should.be.true;
     });
 
     it('should revert when trying to pause while paused', async function() {
       await token.pause();
       await assertRevert(token.pause());
-      assert.equal(await token.paused(), true);
+      (await token.paused()).should.be.true;
     });
 
     it('should revert when calling transfer, transferFrom, approve, increaseApproval, or decreaseApproval while paused', async function() {
@@ -105,35 +113,35 @@ contract('DAVToken', function([owner, user]) {
 
     it('should revert if a non-owner tries to pause', async () => {
       await assertRevert(token.pause({ from: user }));
-      assert.equal(await token.paused(), false);
+      (await token.paused()).should.be.false;
     });
   });
 
   describe('unpause()', () => {
     it('should be callable by owner and modify state', async function() {
-      assert.equal(await token.paused(), false);
+      (await token.paused()).should.be.false;
       await token.pause();
-      assert.equal(await token.paused(), true);
+      (await token.paused()).should.be.true;
       await token.unpause();
-      assert.equal(await token.paused(), false);
+      (await token.paused()).should.be.false;
     });
 
     it('should revert when trying to unpause while not paused', async function() {
       await assertRevert(token.unpause());
-      assert.equal(await token.paused(), false);
+      (await token.paused()).should.be.false;
     });
 
     it('should revert if a non-owner tries to unpause', async () => {
       await token.pause();
       await assertRevert(token.unpause({ from: user }));
-      assert.equal(await token.paused(), true);
+      (await token.paused()).should.be.true;
     });
   });
 
   describe('increaseApproval()', () => {
     it('should allow increasing the allowance with increaseApproval', async function() {
       await token.increaseApproval(owner, 1);
-      assert.equal(await token.allowance(owner, owner), 1);
+      (await token.allowance(owner, owner)).should.be.bignumber.equal(1);
     });
   });
 
@@ -141,13 +149,13 @@ contract('DAVToken', function([owner, user]) {
     it('should allow decreasing the allowance with decreaseApproval', async function() {
       await token.approve(owner, 5);
       await token.decreaseApproval(owner, 1);
-      assert.equal(await token.allowance(owner, owner), 4);
+      (await token.allowance(owner, owner)).should.be.bignumber.equal(4);
     });
 
     it('should set approved amount to 0 if trying to decreaseApproval to below 0', async function() {
       await token.approve(owner, 1);
       await token.decreaseApproval(owner, 2);
-      assert.equal(await token.allowance(owner, owner), 0);
+      (await token.allowance(owner, owner)).should.be.bignumber.equal(0);
     });
   });
 
