@@ -1,4 +1,5 @@
 const ether = require('../helpers/ether');
+const dav = require('../helpers/dav');
 const assertRevert = require('../helpers/assertRevert');
 const { advanceBlock } = require('../helpers/advanceToBlock');
 const { increaseTimeTo, duration } = require('../helpers/increaseTime');
@@ -16,7 +17,7 @@ const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
 contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown]) => {
 
-  const totalSupply = new BigNumber('1e22');
+  const totalSupply = dav(10000);
   const crowdsaleSupply = totalSupply.mul(0.4);
   const rate = new BigNumber(10000);
   const minimalContribution = ether(0.2);
