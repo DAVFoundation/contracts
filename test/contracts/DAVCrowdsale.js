@@ -327,10 +327,23 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
 
   describe('after the Crowdsale is finalized', () => {
     let finalizeLogs;
+    const weiRaised = ether(0.4);
+    const tokensSold = weiRaised.mul(rate);
 
     beforeEach(async () => {
+      await increaseTimeTo(openingTimeB);
+      await advanceBlock();
+      await crowdsale.sendTransaction({ from: buyerA, value: weiRaised.div(2) });
+      await crowdsale.sendTransaction({ from: buyerB, value: weiRaised.div(2) });
+
       await increaseTimeTo(afterClosingTime);
       finalizeLogs = (await crowdsale.finalize({ from: owner })).logs;
+    });
+
+    it('should transfer tokens to foundation wallet worth 50% more than number of tokens raised (%40 to %60)', async () => {
+      const expectedFoundationTokens = tokensSold.mul(1.5);
+      const balance = await token.balanceOf(foundation);
+      balance.should.be.bignumber.equal(expectedFoundationTokens);
     });
 
     it('should transfer token ownership back to original owner', async () => {
