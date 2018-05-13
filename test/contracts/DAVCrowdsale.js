@@ -345,6 +345,14 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
       balance.should.be.bignumber.equal(expectedFoundationTokens);
     });
 
+    it('should burn off remaining tokens', async () => {
+      const expectedTotalSupply = tokensSold.mul(2.5);
+      const totalSupplyReturned = await token.totalSupply();
+      totalSupplyReturned.should.be.bignumber.equal(expectedTotalSupply);
+      const balance = await token.balanceOf(crowdsale.address);
+      balance.should.be.bignumber.equal(0);
+    });
+
     it('should transfer token ownership back to original owner', async () => {
       const event = finalizeLogs.find(e => e.event === 'OwnershipTransferred');
       should.exist(event);

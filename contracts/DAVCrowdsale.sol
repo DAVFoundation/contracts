@@ -96,6 +96,9 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
       foundationTokens = crowdsaleBalance;
     }
     davToken.transfer(tokenWallet, foundationTokens);
+    // Burn off remaining tokens
+    crowdsaleBalance = davToken.balanceOf(this);
+    davToken.burn(crowdsaleBalance);
     // transfer token Ownership back to original owner
     davToken.transferOwnership(owner);
   }
