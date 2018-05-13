@@ -38,6 +38,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     require(_minimalContribution > 0);
     require(_maximalIndividualContribution > 0);
     require(_minimalContribution <= _maximalIndividualContribution);
+    require(_tokenWallet != address(0));
     minimalContribution = _minimalContribution;
     maximalIndividualContribution = _maximalIndividualContribution;
     openingTimeB = _openingTimeB;
