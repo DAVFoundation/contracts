@@ -45,7 +45,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
 
     token = await DAVToken.new(totalSupply);
     crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
-    await token.transfer(crowdsale.address, crowdsaleSupply);
+    await token.transfer(crowdsale.address, totalSupply);
     await token.pause();
     await token.transferOwnership(crowdsale.address);
     crowdsale.whitelistUsersA([buyerA]);
