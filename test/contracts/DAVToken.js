@@ -1,6 +1,7 @@
 const DAVToken = artifacts.require('./mocks/DAVToken.sol');
 const assertRevert = require('../helpers/assertRevert');
-const totalSupply = 100000;
+const dav = require('../helpers/dav');
+const totalSupply = dav(10000);
 
 const BigNumber = web3.BigNumber;
 
@@ -19,7 +20,7 @@ contract('DAVToken', function([owner, user]) {
   describe('totalSupply()', () => {
     it('should return the correct total supply after construction', async function() {
       const totalSupplyReturned = await token.totalSupply();
-      totalSupply.should.be.bignumber.equal(100000);
+      totalSupply.should.be.bignumber.equal(10000*1e18);
       totalSupplyReturned.should.be.bignumber.equal(totalSupply);
     });
   });
