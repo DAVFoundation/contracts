@@ -1,5 +1,5 @@
 const ether = require('../helpers/ether');
-const dav = require('../helpers/dav');
+const vinci = require('../helpers/vinci');
 const assertRevert = require('../helpers/assertRevert');
 const { advanceBlock } = require('../helpers/advanceToBlock');
 const { increaseTimeTo, duration } = require('../helpers/increaseTime');
@@ -17,10 +17,10 @@ const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
 contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown]) => {
 
-  const totalSupply = dav(20000);
+  const totalSupply = vinci(20000);
   const rate = new BigNumber(10000);
   const weiCap = ether(0.8);
-  const davCap = weiCap * rate;
+  const vinciCap = weiCap * rate;
   const minimalContribution = ether(0.2);
   const maximalIndividualContribution = ether(0.5);
   const value = ether(0.2);
@@ -45,7 +45,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
     afterClosingTime = closingTime + duration.seconds(1);
 
     token = await DAVToken.new(totalSupply);
-    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, weiCap, davCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
+    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, weiCap, vinciCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
     await token.transfer(crowdsale.address, totalSupply);
     await token.pause();
     await token.transferOwnership(crowdsale.address);
@@ -92,35 +92,35 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
     });
   });
 
-  describe('davSold()', () => {
+  describe('vinciSold()', () => {
 
     beforeEach(async () => {
       await increaseTimeTo(openingTime);
       await advanceBlock();
     });
 
-    it('should return 0 dav sold before first purchase', async () => {
-      const davSold = await crowdsale.davSold();
-      davSold.should.be.bignumber.equal(0);
+    it('should return 0 vinci sold before first purchase', async () => {
+      const vinciSold = await crowdsale.vinciSold();
+      vinciSold.should.be.bignumber.equal(0);
     });
 
-    it('should return the correct amount of dav sold', async () => {
-      let davSold;
-      davSold = await crowdsale.davSold();
-      davSold.should.be.bignumber.equal(0);
+    it('should return the correct number of vinci sold', async () => {
+      let vinciSold;
+      vinciSold = await crowdsale.vinciSold();
+      vinciSold.should.be.bignumber.equal(0);
       await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
-      davSold = await crowdsale.davSold();
-      davSold.should.be.bignumber.equal(value * rate);
+      vinciSold = await crowdsale.vinciSold();
+      vinciSold.should.be.bignumber.equal(value * rate);
       await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
-      davSold = await crowdsale.davSold();
-      davSold.should.be.bignumber.equal(value * 2 * rate);
+      vinciSold = await crowdsale.vinciSold();
+      vinciSold.should.be.bignumber.equal(value * 2 * rate);
     });
   });
 
-  describe('davCap()', () => {
+  describe('vinciCap()', () => {
     it('should return the maximum number of DAV that can be sold', async () => {
-      const davCap = await crowdsale.davCap();
-      davCap.should.be.bignumber.equal(davCap);
+      const vinciCap = await crowdsale.vinciCap();
+      vinciCap.should.be.bignumber.equal(vinciCap);
     });
   });
 

@@ -20,8 +20,8 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   mapping(address => bool) public whitelistB;
   // Maximum number of Wei that can be raised
   uint256 public weiCap;
-  // Maximum number of DAV that can be sold in Crowdsale
-  uint256 public davCap;
+  // Maximum number of Vincis that can be sold in Crowdsale
+  uint256 public vinciCap;
   // Minimal contribution amount in Wei per transaction
   uint256 public minimalContribution;
   // Maximal total contribution amount in Wei per beneficiary
@@ -32,23 +32,23 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   address public tokenWallet;
   // DAV Token
   IDAVToken public davToken;
-  // Amount of dav sold
-  uint256 public davSold;
+  // Amount of Vincis sold
+  uint256 public vinciSold;
 
-  function DAVCrowdsale(uint256 _rate, address _wallet, address _tokenWallet, IDAVToken _token, uint256 _weiCap, uint256 _davCap, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
+  function DAVCrowdsale(uint256 _rate, address _wallet, address _tokenWallet, IDAVToken _token, uint256 _weiCap, uint256 _vinciCap, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
     Crowdsale(_rate, _wallet, _token)
     TimedCrowdsale(_openingTime, _closingTime)
   {
     require(_openingTimeB >= _openingTime);
     require(_openingTimeB <= _closingTime);
     require(_weiCap > 0);
-    require(_davCap > 0);
+    require(_vinciCap > 0);
     require(_minimalContribution > 0);
     require(_maximalIndividualContribution > 0);
     require(_minimalContribution <= _maximalIndividualContribution);
     require(_tokenWallet != address(0));
     weiCap = _weiCap;
-    davCap = _davCap;
+    vinciCap = _vinciCap;
     minimalContribution = _minimalContribution;
     maximalIndividualContribution = _maximalIndividualContribution;
     openingTimeB = _openingTimeB;
@@ -96,8 +96,8 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     super._updatePurchasingState(_beneficiary, _weiAmount);
     // Update user contribution total
     contributions[_beneficiary] = contributions[_beneficiary].add(_weiAmount);
-    // Update total dav sold
-    davSold = davSold.add(_weiAmount.mul(rate));
+    // Update total Vincis sold
+    vinciSold = vinciSold.add(_weiAmount.mul(rate));
   }
 
   function finalization() internal {

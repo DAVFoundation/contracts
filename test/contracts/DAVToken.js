@@ -1,7 +1,7 @@
 const DAVToken = artifacts.require('./mocks/DAVToken.sol');
 const assertRevert = require('../helpers/assertRevert');
-const dav = require('../helpers/dav');
-const totalSupply = dav(10000);
+const vinci = require('../helpers/vinci');
+const totalSupply = vinci(10000);
 
 const BigNumber = web3.BigNumber;
 
