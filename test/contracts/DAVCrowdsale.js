@@ -264,6 +264,22 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
       it('should revert if user is not whitelisted', async () => {
         await assertRevert(crowdsale.sendTransaction({ from: buyerUnknown, value }));
       });
+
+      it('should succeed if amount of wei raised equals wei cap', async () => {
+        await crowdsale.sendTransaction({ from: buyerA, value: ether(0.4) }).should.be.fulfilled;
+        await crowdsale.sendTransaction({ from: buyerB, value: ether(0.4) }).should.be.fulfilled;
+        const weiRaised = await crowdsale.weiRaised();
+        weiRaised.should.be.bignumber.equal(weiCap);
+      });
+
+      it('should revert if amount of wei raised in total is greater than wei cap', async () => {
+        await crowdsale.sendTransaction({ from: buyerA, value: ether(0.4) }).should.be.fulfilled;
+        await crowdsale.sendTransaction({ from: buyerB, value: ether(0.3) }).should.be.fulfilled;
+        await assertRevert(crowdsale.sendTransaction({ from: buyerB, value: ether(0.2) }));
+        const weiRaised = await crowdsale.weiRaised();
+        weiRaised.should.be.bignumber.equal(ether(0.7));
+      });
+
     });
 
     describe('buyTokens()', () => {
