@@ -92,6 +92,31 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
     });
   });
 
+  describe('davSold()', () => {
+
+    beforeEach(async () => {
+      await increaseTimeTo(openingTime);
+      await advanceBlock();
+    });
+
+    it('should return 0 dav sold before first purchase', async () => {
+      const davSold = await crowdsale.davSold();
+      davSold.should.be.bignumber.equal(0);
+    });
+
+    it('should return the correct amount of dav sold', async () => {
+      let davSold;
+      davSold = await crowdsale.davSold();
+      davSold.should.be.bignumber.equal(0);
+      await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+      davSold = await crowdsale.davSold();
+      davSold.should.be.bignumber.equal(value * rate);
+      await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+      davSold = await crowdsale.davSold();
+      davSold.should.be.bignumber.equal(value * 2 * rate);
+    });
+  });
+
   describe('davCap()', () => {
     it('should return the maximum number of DAV that can be sold', async () => {
       const davCap = await crowdsale.davCap();

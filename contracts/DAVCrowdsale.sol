@@ -32,6 +32,8 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   address public tokenWallet;
   // DAV Token
   IDAVToken public davToken;
+  // Amount of dav sold
+  uint256 public davSold;
 
   function DAVCrowdsale(uint256 _rate, address _wallet, address _tokenWallet, IDAVToken _token, uint256 _weiCap, uint256 _davCap, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
     Crowdsale(_rate, _wallet, _token)
@@ -94,6 +96,8 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     super._updatePurchasingState(_beneficiary, _weiAmount);
     // Update user contribution total
     contributions[_beneficiary] = contributions[_beneficiary].add(_weiAmount);
+    // Update total dav sold
+    davSold = davSold.add(_weiAmount.mul(rate));
   }
 
   function finalization() internal {
