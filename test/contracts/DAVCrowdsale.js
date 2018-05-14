@@ -60,6 +60,31 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
     });
   });
 
+  describe('weiRaised()', () => {
+
+    beforeEach(async () => {
+      await increaseTimeTo(openingTime);
+      await advanceBlock();
+    });
+
+    it('should return 0 wei raised before first purchase', async () => {
+      const weiRaised = await crowdsale.weiRaised();
+      weiRaised.should.be.bignumber.equal(0);
+    });
+
+    it('should return the correct amount of wei raised', async () => {
+      let weiRaised;
+      weiRaised = await crowdsale.weiRaised();
+      weiRaised.should.be.bignumber.equal(0);
+      await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+      weiRaised = await crowdsale.weiRaised();
+      weiRaised.should.be.bignumber.equal(value);
+      await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+      weiRaised = await crowdsale.weiRaised();
+      weiRaised.should.be.bignumber.equal(value * 2);
+    });
+  });
+
   describe('weiCap()', () => {
     it('should return the maximum number of wei that can be raised', async () => {
       const weiCap = await crowdsale.weiCap();
