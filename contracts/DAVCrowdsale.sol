@@ -18,6 +18,10 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   mapping(address => bool) public whitelistA;
   // List of beneficiaries whitelisted in group B
   mapping(address => bool) public whitelistB;
+  // Maximum number of Wei that can be raised
+  uint256 public weiCap;
+  // Maximum number of DAV that can be sold in Crowdsale
+  uint256 public davCap;
   // Minimal contribution amount in Wei per transaction
   uint256 public minimalContribution;
   // Maximal total contribution amount in Wei per beneficiary
@@ -29,16 +33,20 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   // DAV Token
   IDAVToken public davToken;
 
-  function DAVCrowdsale(uint256 _rate, address _wallet, address _tokenWallet, IDAVToken _token, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
+  function DAVCrowdsale(uint256 _rate, address _wallet, address _tokenWallet, IDAVToken _token, uint256 _weiCap, uint256 _davCap, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
     Crowdsale(_rate, _wallet, _token)
     TimedCrowdsale(_openingTime, _closingTime)
   {
     require(_openingTimeB >= _openingTime);
     require(_openingTimeB <= _closingTime);
+    require(_weiCap > 0);
+    require(_davCap > 0);
     require(_minimalContribution > 0);
     require(_maximalIndividualContribution > 0);
     require(_minimalContribution <= _maximalIndividualContribution);
     require(_tokenWallet != address(0));
+    weiCap = _weiCap;
+    davCap = _davCap;
     minimalContribution = _minimalContribution;
     maximalIndividualContribution = _maximalIndividualContribution;
     openingTimeB = _openingTimeB;

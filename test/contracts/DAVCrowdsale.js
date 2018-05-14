@@ -19,6 +19,8 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
 
   const totalSupply = dav(20000);
   const rate = new BigNumber(10000);
+  const weiCap = ether(0.8);
+  const davCap = weiCap * rate;
   const minimalContribution = ether(0.2);
   const maximalIndividualContribution = ether(0.5);
   const value = ether(0.2);
@@ -43,7 +45,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
     afterClosingTime = closingTime + duration.seconds(1);
 
     token = await DAVToken.new(totalSupply);
-    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
+    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, weiCap, davCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
     await token.transfer(crowdsale.address, totalSupply);
     await token.pause();
     await token.transferOwnership(crowdsale.address);
@@ -53,7 +55,22 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
 
   describe('tokenWallet()', () => {
     it('should return the foundation address', async () => {
-      (await crowdsale.tokenWallet()).should.equal(foundation);
+      const tokenWallet = await crowdsale.tokenWallet();
+      tokenWallet.should.equal(foundation);
+    });
+  });
+
+  describe('weiCap()', () => {
+    it('should return the maximum number of wei that can be raised', async () => {
+      const weiCap = await crowdsale.weiCap();
+      weiCap.should.be.bignumber.equal(weiCap);
+    });
+  });
+
+  describe('davCap()', () => {
+    it('should return the maximum number of DAV that can be sold', async () => {
+      const davCap = await crowdsale.davCap();
+      davCap.should.be.bignumber.equal(davCap);
     });
   });
 

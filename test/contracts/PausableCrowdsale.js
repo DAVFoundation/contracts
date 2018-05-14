@@ -14,6 +14,8 @@ contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, foundation, buyer])
   const totalSupply = new BigNumber('1e22');
   const crowdsaleSupply = totalSupply.mul(0.4);
   const rate = new BigNumber(10000);
+  const weiCap = ether(0.8);
+  const davCap = weiCap * rate;
   const minimalContribution = ether(0.2);
   const maximalIndividualContribution = ether(0.5);
   const value = ether(0.2);
@@ -35,7 +37,7 @@ contract('DAVCrowdsale is PausableCrowdsale', ([owner, bank, foundation, buyer])
     closingTime = openingTime + duration.weeks(1);
 
     token = await DAVToken.new(totalSupply);
-    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
+    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, weiCap, davCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
     await token.transfer(crowdsale.address, crowdsaleSupply);
     await increaseTimeTo(openingTime);
     await advanceBlock();
