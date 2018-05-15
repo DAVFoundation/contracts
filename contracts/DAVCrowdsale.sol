@@ -86,6 +86,8 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     super._preValidatePurchase(_beneficiary, _weiAmount);
     // Verify that the amount won't put us over the wei cap
     require(weiRaised.add(_weiAmount) <= weiCap);
+    // Verify that the amount won't put us over the vinci cap
+    require(vinciSold.add(_weiAmount.mul(rate)) <= vinciCap);
     // Verify amount is larger than or equal to minimal contribution
     require(_weiAmount >= minimalContribution);
     // Verify that the gas price is lower than 50 gwei
