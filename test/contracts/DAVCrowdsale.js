@@ -1,5 +1,5 @@
 const ether = require('../helpers/ether');
-const vinci = require('../helpers/vinci');
+const dav = require('../helpers/dav');
 const assertRevert = require('../helpers/assertRevert');
 const { advanceBlock } = require('../helpers/advanceToBlock');
 const { increaseTimeTo, duration } = require('../helpers/increaseTime');
@@ -17,7 +17,7 @@ const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
 contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB, buyerUnknown]) => {
 
-  const totalSupply = vinci(20000);
+  const totalSupply = dav(20000);
   const rate = new BigNumber(10000);
   const weiCap = ether(0.8);
   const vinciCap = weiCap * rate;
