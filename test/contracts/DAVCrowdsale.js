@@ -20,7 +20,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
   const totalSupply = dav(20000);
   const rate = new BigNumber(10000);
   const weiCap = ether(0.8);
-  const vinciCap = weiCap * rate;
+  const vinciCap = ether(0.9) * rate;
   const minimalContribution = ether(0.2);
   const maximalIndividualContribution = ether(0.5);
   const value = ether(0.2);
@@ -129,6 +129,69 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
       const vinciCap = await crowdsale.vinciCap();
       vinciCap.should.be.bignumber.equal(vinciCap);
     });
+  });
+
+  describe('recordSale()', () => {
+    it('should assign tokens to locked tokens wallet', async () => {
+      const tokens = dav(1);
+      await crowdsale.recordSale(0, tokens);
+      const balance = await token.balanceOf(lockedTokens);
+      balance.should.be.bignumber.equal(tokens);
+    });
+
+    it('should only be callable by owner', async () => {
+      await crowdsale.recordSale(1, 1, { from: owner }).should.be.fulfilled;
+      await assertRevert(crowdsale.recordSale(1, 1, { from: buyerA }));
+    });
+
+    it('should affect the amount of wei raised', async () => {
+      await crowdsale.recordSale(1, 0);
+      (await crowdsale.weiRaised()).should.be.bignumber.equal(1);
+      (await crowdsale.vinciSold()).should.be.bignumber.equal(0);
+    });
+
+    it('should affect the amount of vinci sold', async () => {
+      await crowdsale.recordSale(0, 1);
+      (await crowdsale.weiRaised()).should.be.bignumber.equal(0);
+      (await crowdsale.vinciSold()).should.be.bignumber.equal(1);
+    });
+
+    it('should revert if will cause wei cap to pass', async () => {
+      await crowdsale.recordSale(ether(0.7), 1).should.be.fulfilled;
+      await assertRevert(crowdsale.recordSale(ether(0.2), 1));
+      (await crowdsale.weiRaised()).should.be.bignumber.equal(ether(0.7));
+      (await crowdsale.vinciSold()).should.be.bignumber.equal(1);
+    });
+
+    it('should revert if will cause vinci cap to pass', async () => {
+      await crowdsale.recordSale(1, vinciCap/2).should.be.fulfilled;
+      await assertRevert(crowdsale.recordSale(1, vinciCap));
+      (await crowdsale.weiRaised()).should.be.bignumber.equal(1);
+      (await crowdsale.vinciSold()).should.be.bignumber.equal(vinciCap/2);
+    });
+
+    it('should be callable before and during crowdsale', async () => {
+      await crowdsale.recordSale(1, 2).should.be.fulfilled;
+      await increaseTimeTo(openingTime);
+      await advanceBlock();
+      await crowdsale.recordSale(1, 2).should.be.fulfilled;
+      await increaseTimeTo(openingTimeB);
+      await advanceBlock();
+      await crowdsale.recordSale(1, 2).should.be.fulfilled;
+      (await crowdsale.weiRaised()).should.be.bignumber.equal(3);
+      (await crowdsale.vinciSold()).should.be.bignumber.equal(6);
+    });
+
+    it('should revert if called after sale is closed and finalized', async () => {
+      await crowdsale.recordSale(1, 2).should.be.fulfilled;
+      await increaseTimeTo(afterClosingTime);
+      await advanceBlock();
+      await crowdsale.finalize({from: owner}).should.be.fulfilled;
+      await assertRevert(crowdsale.recordSale(1, 2));
+      (await crowdsale.weiRaised()).should.be.bignumber.equal(1);
+      (await crowdsale.vinciSold()).should.be.bignumber.equal(2);
+    });
+
   });
 
   describe('between the Crowdsale start time and Whitelist B start time', () => {

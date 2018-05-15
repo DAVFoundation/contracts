@@ -82,6 +82,26 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     }
   }
 
+  /**
+   * Record a transaction that happened during the presale and transfer tokens to locked tokens wallet
+   *
+   * @param _weiAmount Value in wei involved in the purchase
+   * @param _vinciAmount Amount of Vincis sold
+   */
+  function recordSale(uint256 _weiAmount, uint256 _vinciAmount) external onlyOwner {
+    // Verify that the amount won't put us over the wei cap
+    require(weiRaised.add(_weiAmount) <= weiCap);
+    // Verify that the amount won't put us over the vinci cap
+    require(vinciSold.add(_vinciAmount) <= vinciCap);
+    // Verify Crowdsale hasn't been finalized yet
+    require(!isFinalized);
+    // Update crowdsale totals
+    weiRaised = weiRaised.add(_weiAmount);
+    vinciSold = vinciSold.add(_vinciAmount);
+    // Transfer tokens
+    token.transfer(lockedTokensWallet, _vinciAmount);
+  }
+
   function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal {
     super._preValidatePurchase(_beneficiary, _weiAmount);
     // Verify that the amount won't put us over the wei cap
