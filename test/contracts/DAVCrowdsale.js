@@ -15,7 +15,7 @@ const should = require('chai')
 const DAVToken = artifacts.require('./DAVToken.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown]) => {
+contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB, buyerUnknown]) => {
 
   const totalSupply = vinci(20000);
   const rate = new BigNumber(10000);
@@ -45,7 +45,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
     afterClosingTime = closingTime + duration.seconds(1);
 
     token = await DAVToken.new(totalSupply);
-    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, token.address, weiCap, vinciCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
+    crowdsale = await DAVCrowdsale.new(rate, bank, foundation, lockedTokens, token.address, weiCap, vinciCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
     await token.transfer(crowdsale.address, totalSupply);
     await token.pause();
     await token.transferOwnership(crowdsale.address);
@@ -57,6 +57,13 @@ contract('DAVCrowdsale', ([owner, bank, foundation, buyerA, buyerB, buyerUnknown
     it('should return the foundation address', async () => {
       const tokenWallet = await crowdsale.tokenWallet();
       tokenWallet.should.equal(foundation);
+    });
+  });
+
+  describe('lockedTokensWallet()', () => {
+    it('should return the locked tokens wallet address', async () => {
+      const lockedTokensWallet = await crowdsale.lockedTokensWallet();
+      lockedTokensWallet.should.equal(lockedTokens);
     });
   });
 

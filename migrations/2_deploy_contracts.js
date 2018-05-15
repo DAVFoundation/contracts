@@ -1,7 +1,7 @@
 const DAVToken = artifacts.require('./DAVToken.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-module.exports = async (deployer, network, [bank, foundation]) => {
+module.exports = async (deployer, network, [bank, foundation, lockedTokens]) => {
   // Total supply
   const totalSupply = web3.toWei(1771428571, 'ether');
   // Conversion rate between wei to Vinci (DAV's smallest unit: 1/1e18 DAV)
@@ -18,5 +18,5 @@ module.exports = async (deployer, network, [bank, foundation]) => {
   const closingTime = Date.parse('25 June 2018 13:00:00 GMT')/1000;
 
   await deployer.deploy(DAVToken, totalSupply);
-  await deployer.deploy(DAVCrowdsale, rate, bank, foundation, DAVToken.address, weiCap, vinciCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime);
+  await deployer.deploy(DAVCrowdsale, rate, bank, foundation, lockedTokens, DAVToken.address, weiCap, vinciCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime);
 };
