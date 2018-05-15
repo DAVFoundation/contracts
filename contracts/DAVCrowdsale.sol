@@ -83,6 +83,24 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   }
 
   /**
+   * Allow adjustment of the closing time
+   *
+   * @param _closingTime Time to close the sale. If in the past will set to the present
+   */
+  function closeEarly(uint256 _closingTime) external onlyOwner onlyWhileOpen {
+    // Make sure the new closing time isn't after the old closing time
+    require(_closingTime <= closingTime);
+    // solium-disable-next-line security/no-block-members
+    if (_closingTime < block.timestamp) {
+      // If closing time is in the past, set closing time to right now
+      closingTime = block.timestamp;
+    } else {
+      // Update the closing time
+      closingTime = _closingTime;
+    }
+  }
+
+  /**
    * Record a transaction that happened during the presale and transfer tokens to locked tokens wallet
    *
    * @param _weiAmount Value in wei involved in the purchase

@@ -32,6 +32,8 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
   let openingTimeB;
   let closingTime;
   let afterClosingTime;
+  let earlyClosingTime;
+  let afterEarlyClosingTime;
 
   before(async function () {
     // Advance to the next block to correctly read time in the solidity "now" function
@@ -43,6 +45,8 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
     openingTimeB = openingTime + duration.hours(5);
     closingTime = openingTime + duration.weeks(1);
     afterClosingTime = closingTime + duration.seconds(1);
+    earlyClosingTime = openingTime + duration.hours(1); // used for testing closeEarly() only
+    afterEarlyClosingTime = earlyClosingTime  + duration.seconds(1); // used for testing closeEarly() only
 
     token = await DAVToken.new(totalSupply);
     crowdsale = await DAVCrowdsale.new(rate, bank, foundation, lockedTokens, token.address, weiCap, vinciCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime, {from: owner});
@@ -338,6 +342,57 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
       });
     });
 
+    describe('closeEarly()', () => {
+      it('should close the sale at the given time', async () => {
+        await crowdsale.closeEarly(earlyClosingTime);
+        (await crowdsale.hasClosed()).should.be.false;
+        await increaseTimeTo(afterEarlyClosingTime);
+        await advanceBlock();
+        (await crowdsale.hasClosed()).should.be.true;
+      });
+
+      it('should update closingTime', async () => {
+        await crowdsale.closeEarly(earlyClosingTime);
+        (await crowdsale.closingTime()).should.be.bignumber.equal(earlyClosingTime);
+      });
+
+      it('should close the sale right after this block if given time is in the past', async () => {
+        await crowdsale.closeEarly(0);
+        (await crowdsale.closingTime()).should.be.bignumber.equal(latestTime());
+        await increaseTimeTo(afterEarlyClosingTime);
+        await advanceBlock();
+        (await crowdsale.hasClosed()).should.be.true;
+      });
+
+      it('should revert if called by non-owner', async () => {
+        await assertRevert(crowdsale.closeEarly(earlyClosingTime, { from: buyerA }));
+      });
+
+      it('should revert if new time is later than current close time', async () => {
+        await assertRevert(crowdsale.closeEarly(afterClosingTime));
+      });
+
+      it('should block additional token purchases', async () => {
+        await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+        await crowdsale.closeEarly(earlyClosingTime);
+        await increaseTimeTo(afterEarlyClosingTime);
+        await advanceBlock();
+        await assertRevert(crowdsale.sendTransaction({ from: buyerA, value }));
+      });
+
+      it('should allow sale to be finalized early', async () => {
+        await assertRevert(crowdsale.finalize());
+        await crowdsale.closeEarly(earlyClosingTime);
+        await increaseTimeTo(afterEarlyClosingTime);
+        await advanceBlock();
+        await crowdsale.finalize().should.be.fulfilled;
+        (await crowdsale.isFinalized()).should.be.true;
+      });
+
+      // xit('should revert if called before start time', async () => {});
+      // xit('should revert if called after end time', async () => {});
+    });
+
   });
 
   describe('between Whitelist B start and crowdsale end time', () => {
@@ -428,6 +483,11 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
       });
     });
 
+    describe('closeEarly()', () => {
+      it('should revert', async () => {
+        await assertRevert(crowdsale.closeEarly(earlyClosingTime));
+      });
+    });
   });
 
   describe('after the Crowdsale end time', () => {
@@ -475,6 +535,11 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
       should.exist(event);
     });
 
+    describe('closeEarly()', () => {
+      it('should revert', async () => {
+        await assertRevert(crowdsale.closeEarly(earlyClosingTime));
+      });
+    });
   });
 
   describe('after the Crowdsale is finalized', () => {
@@ -517,6 +582,12 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
       const unpauseLogs = (await token.unpause({ from: owner })).logs;
       const event = unpauseLogs.find(e => e.event === 'Unpause');
       should.exist(event);
+    });
+
+    describe('closeEarly()', () => {
+      it('should revert', async () => {
+        await assertRevert(crowdsale.closeEarly(earlyClosingTime));
+      });
     });
   });
 
