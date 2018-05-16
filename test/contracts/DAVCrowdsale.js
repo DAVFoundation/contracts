@@ -249,7 +249,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
         await assertRevert(crowdsale.sendTransaction({ from: buyerA, value: ether(0.19) }));
       });
 
-      it('should revert if total amount contributed is greater than maximal contribution cap', async () => {
+      it('should revert if total amount contributed is greater than personal maximal contribution cap', async () => {
         await crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }).should.be.fulfilled;
         await crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }).should.be.fulfilled;
         await assertRevert(crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }));
@@ -311,7 +311,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
         await assertRevert(crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.19) }));
       });
 
-      it('should revert if total amount contributed is greater than maximal contribution cap', async () => {
+      it('should revert if total amount contributed is greater than personal maximal contribution cap', async () => {
         await crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.2) }).should.be.fulfilled;
         await crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.2) }).should.be.fulfilled;
         await assertRevert(crowdsale.buyTokens(buyerA, { from: buyerA, value: ether(0.2) }));
