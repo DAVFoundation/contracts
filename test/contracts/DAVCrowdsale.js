@@ -389,8 +389,6 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
         (await crowdsale.isFinalized()).should.be.true;
       });
 
-      // xit('should revert if called before start time', async () => {});
-      // xit('should revert if called after end time', async () => {});
     });
 
   });
