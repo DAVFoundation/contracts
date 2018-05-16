@@ -1,7 +1,5 @@
-const DAVToken = artifacts.require('./mocks/DAVToken.sol');
-const assertRevert = require('../helpers/assertRevert');
 const dav = require('../helpers/dav');
-const totalSupply = dav(10000);
+const assertRevert = require('../helpers/assertRevert');
 
 const BigNumber = web3.BigNumber;
 
@@ -10,7 +8,11 @@ const should = require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
+const DAVToken = artifacts.require('./mocks/DAVToken.sol');
+
 contract('DAVToken', function([owner, user]) {
+  const totalSupply = dav(10000);
+
   let token;
 
   beforeEach(async () => {
