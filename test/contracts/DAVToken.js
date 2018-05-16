@@ -1,5 +1,8 @@
 const dav = require('../helpers/dav');
 const assertRevert = require('../helpers/assertRevert');
+const { advanceBlock } = require('../helpers/advanceToBlock');
+const { increaseTimeTo, duration } = require('../helpers/increaseTime');
+const latestTime = require('../helpers/latestTime');
 
 const BigNumber = web3.BigNumber;
 
@@ -14,9 +17,54 @@ contract('DAVToken', function([owner, user]) {
   const totalSupply = dav(10000);
 
   let token;
+  let pauseCutoffTime;
+  let afterPauseCutoffTime;
+
+  before(async function () {
+    // Advance to the next block to correctly read time in the solidity "now" function
+    await advanceBlock();
+  });
 
   beforeEach(async () => {
+    pauseCutoffTime = latestTime() + duration.weeks(2);
+    afterPauseCutoffTime = pauseCutoffTime  + duration.days(1);
     token = await DAVToken.new(totalSupply);
+  });
+
+  describe('pauseCutoffTime()', () => {
+    it('should return the time after which pause can no longer be called', async function() {
+      await token.setPauseCutoffTime(pauseCutoffTime);
+      (await token.pauseCutoffTime()).should.be.bignumber.equal(pauseCutoffTime);
+    });
+
+    it('should return 0 if not set', async function() {
+      (await token.pauseCutoffTime()).should.be.bignumber.equal(0);
+    });
+  });
+
+  describe('setPauseCutoffTime()', () => {
+    it('should set the time after which pause can no longer be called (pauseCutoffTime)', async function() {
+      await token.setPauseCutoffTime(pauseCutoffTime);
+      (await token.pauseCutoffTime()).should.be.bignumber.equal(pauseCutoffTime);
+    });
+
+    it('should revert if a pause cutoff time has already been set', async function() {
+      await token.setPauseCutoffTime(pauseCutoffTime);
+      await assertRevert(token.setPauseCutoffTime(0));
+      await assertRevert(token.setPauseCutoffTime(pauseCutoffTime));
+      await assertRevert(token.setPauseCutoffTime(pauseCutoffTime + duration.weeks(1)));
+      (await token.pauseCutoffTime()).should.be.bignumber.equal(pauseCutoffTime);
+
+    });
+
+    it('should revert if time given is in the past', async function() {
+      await assertRevert(token.setPauseCutoffTime(42));
+    });
+
+    it('should revert if called by non-owner', async function() {
+      await assertRevert(token.setPauseCutoffTime(pauseCutoffTime, { from: user }));
+      await token.setPauseCutoffTime(pauseCutoffTime, { from: owner });
+    });
   });
 
   describe('totalSupply()', () => {
@@ -118,6 +166,19 @@ contract('DAVToken', function([owner, user]) {
       await assertRevert(token.pause({ from: user }));
       (await token.paused()).should.be.false;
     });
+
+    it('should not be limited if pause cutoff time not set', async function() {
+      await increaseTimeTo(afterPauseCutoffTime);
+      await advanceBlock();
+      await token.pause().should.be.fulfilled;
+    });
+
+    it('should revert if called past the pause cutoff time', async function() {
+      await token.setPauseCutoffTime(pauseCutoffTime);
+      await increaseTimeTo(afterPauseCutoffTime);
+      await advanceBlock();
+      await assertRevert(token.pause());
+    });
   });
 
   describe('unpause()', () => {
@@ -139,6 +200,16 @@ contract('DAVToken', function([owner, user]) {
       await assertRevert(token.unpause({ from: user }));
       (await token.paused()).should.be.true;
     });
+
+    it('should be callable and functional even past the pause cutoff time', async function() {
+      await token.setPauseCutoffTime(pauseCutoffTime);
+      await token.pause().should.be.fulfilled;
+      await increaseTimeTo(afterPauseCutoffTime);
+      await advanceBlock();
+      await token.unpause().should.be.fulfilled;
+      await assertRevert(token.pause());
+    });
+
   });
 
   describe('increaseApproval()', () => {
