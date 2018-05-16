@@ -444,6 +444,24 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
       });
     });
 
+    describe('high-level purchase after buyTokens() and recordSale()', () => {
+      it('should revert if will cause wei cap to pass', async () => {
+        await crowdsale.recordSale(ether(0.5), 1).should.be.fulfilled;
+        await crowdsale.buyTokens(buyerB, { from: buyerB, value: ether(0.2) }).should.be.fulfilled;
+        await assertRevert(crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }));
+        (await crowdsale.weiRaised()).should.be.bignumber.equal(ether(0.7));
+        (await crowdsale.vinciSold()).should.be.bignumber.equal(dav(0.2).mul(rate).add(1));
+      });
+
+      it('should revert if will cause vinci cap to pass', async () => {
+        await crowdsale.recordSale(1, dav(0.5) * rate).should.be.fulfilled;
+        await crowdsale.buyTokens(buyerB, { from: buyerB, value: ether(0.3) }).should.be.fulfilled;
+        await assertRevert(crowdsale.sendTransaction({ from: buyerA, value: ether(0.2) }));
+        (await crowdsale.weiRaised()).should.be.bignumber.equal(ether(0.3).add(1));
+        (await crowdsale.vinciSold()).should.be.bignumber.equal(dav(0.8).mul(rate));
+      });
+    });
+
   });
 
   describe('before the Crowdsale start time', () => {
