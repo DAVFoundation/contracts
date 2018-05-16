@@ -576,6 +576,11 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
       event.args.newOwner.should.equal(owner);
     });
 
+    it('should set Token\'s pause cutoff time for 3 weeks after close time' , async () => {
+      const tokenPauseCutoffTime = await token.pauseCutoffTime();
+      tokenPauseCutoffTime.should.be.bignumber.equal(closingTime + duration.weeks(3));
+    });
+
     it('token should be unpausable by original owner', async () => {
       const unpauseLogs = (await token.unpause({ from: owner })).logs;
       const event = unpauseLogs.find(e => e.event === 'Unpause');

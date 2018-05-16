@@ -157,6 +157,8 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     // Burn off remaining tokens
     crowdsaleBalance = davToken.balanceOf(this);
     davToken.burn(crowdsaleBalance);
+    // Set token's pause cutoff time to 3 weeks from closing time
+    davToken.setPauseCutoffTime(closingTime.add(1814400));
     // transfer token Ownership back to original owner
     davToken.transferOwnership(owner);
   }
