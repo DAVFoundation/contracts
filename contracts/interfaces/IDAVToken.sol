@@ -16,8 +16,10 @@ contract IDAVToken is ERC20 {
 
   function burn(uint256 _value) public;
 
+  function pauseCutoffTime() public view returns (uint256) {}
   function paused() public view returns (bool) {}
   function pause() public;
   function unpause() public;
+  function setPauseCutoffTime(uint256 _pauseCutoffTime) public;
 
 }
