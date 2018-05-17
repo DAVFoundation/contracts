@@ -147,7 +147,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   function finalization() internal {
     super.finalization();
     // transfer tokens to foundation
-    uint256 foundationTokens = weiRaised.div(2)+weiRaised;
+    uint256 foundationTokens = weiRaised.div(2).add(weiRaised);
     foundationTokens = foundationTokens.mul(rate);
     uint256 crowdsaleBalance = davToken.balanceOf(this);
     if (crowdsaleBalance < foundationTokens) {
