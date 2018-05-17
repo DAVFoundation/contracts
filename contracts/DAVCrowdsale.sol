@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.23;
 
 import './PausableCrowdsale.sol';
 import 'openzeppelin-solidity/contracts/crowdsale/distribution/FinalizableCrowdsale.sol';
