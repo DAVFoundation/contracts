@@ -36,6 +36,8 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   IDAVToken public davToken;
   // Amount of Vincis sold
   uint256 public vinciSold;
+  // Address of account that can manage the whitelist
+  address public whitelistManager;
 
   constructor(uint256 _rate, address _wallet, address _tokenWallet, address _lockedTokensWallet, IDAVToken _token, uint256 _weiCap, uint256 _vinciCap, uint256 _minimalContribution, uint256 _maximalIndividualContribution, uint256 _openingTime, uint256 _openingTimeB, uint256 _closingTime) public
     Crowdsale(_rate, _wallet, _token)
@@ -58,6 +60,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     tokenWallet = _tokenWallet;
     lockedTokensWallet= _lockedTokensWallet;
     davToken = _token;
+    whitelistManager = msg.sender;
   }
 
   /**
@@ -66,6 +69,24 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   modifier onlyWhitelisted(address _beneficiary) {
     require(whitelistA[_beneficiary] || (whitelistB[_beneficiary] && block.timestamp >= openingTimeB));
     _;
+  }
+
+  /**
+   * @dev Throws if called by any account other than the whitelist manager
+   */
+  modifier onlyWhitelistManager() {
+    require(msg.sender == whitelistManager);
+    _;
+  }
+
+  /**
+   * @dev Change the whitelist manager
+   *
+   * @param _whitelistManager Address of new whitelist manager
+   */
+  function setWhitelistManager(address _whitelistManager) external onlyOwner {
+    require(_whitelistManager != address(0));
+    whitelistManager= _whitelistManager;
   }
 
   /**
@@ -82,7 +103,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
    *
    * @param _beneficiaries List of addresses to be whitelisted
    */
-  function addUsersWhitelistA(address[] _beneficiaries) external onlyOwner {
+  function addUsersWhitelistA(address[] _beneficiaries) external onlyWhitelistManager {
     for (uint256 i = 0; i < _beneficiaries.length; i++) {
       whitelistA[_beneficiaries[i]] = true;
     }
@@ -93,7 +114,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
    *
    * @param _beneficiaries List of addresses to be whitelisted
    */
-  function addUsersWhitelistB(address[] _beneficiaries) external onlyOwner {
+  function addUsersWhitelistB(address[] _beneficiaries) external onlyWhitelistManager {
     for (uint256 i = 0; i < _beneficiaries.length; i++) {
       whitelistB[_beneficiaries[i]] = true;
     }
@@ -104,7 +125,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
    *
    * @param _beneficiaries List of addresses to be removed from whitelist
    */
-  function removeUsersWhitelistA(address[] _beneficiaries) external onlyOwner {
+  function removeUsersWhitelistA(address[] _beneficiaries) external onlyWhitelistManager {
     for (uint256 i = 0; i < _beneficiaries.length; i++) {
       whitelistA[_beneficiaries[i]] = false;
     }
@@ -115,7 +136,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
    *
    * @param _beneficiaries List of addresses to be removed from whitelist
    */
-  function removeUsersWhitelistB(address[] _beneficiaries) external onlyOwner {
+  function removeUsersWhitelistB(address[] _beneficiaries) external onlyWhitelistManager {
     for (uint256 i = 0; i < _beneficiaries.length; i++) {
       whitelistB[_beneficiaries[i]] = false;
     }

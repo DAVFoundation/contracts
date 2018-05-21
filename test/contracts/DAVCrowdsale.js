@@ -15,7 +15,7 @@ const should = require('chai')
 const DAVToken = artifacts.require('./DAVToken.sol');
 const DAVCrowdsale = artifacts.require('./DAVCrowdsale.sol');
 
-contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB, buyerUnknown]) => {
+contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, whitelistManagerAccount, buyerA, buyerB, buyerUnknown]) => {
 
   const totalSupply = dav(20000);
   const rate = new BigNumber(10000);
@@ -61,6 +61,46 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
     it('should return the foundation address', async () => {
       const tokenWallet = await crowdsale.tokenWallet();
       tokenWallet.should.equal(foundation);
+    });
+  });
+
+  describe('whitelistManager()', () => {
+    it('should return the owner address by default', async () => {
+      const whitelistManager = await crowdsale.whitelistManager();
+      whitelistManager.should.equal(owner);
+    });
+  });
+
+  describe('setWhitelistManager()', () => {
+    it('should update the whitelistManager account', async () => {
+      await crowdsale.setWhitelistManager(whitelistManagerAccount, { from: owner }).should.be.fulfilled;
+      const whitelistManager = await crowdsale.whitelistManager();
+      whitelistManager.should.equal(whitelistManagerAccount);
+    });
+
+    it('should only be callable by owner', async () => {
+      await assertRevert(crowdsale.setWhitelistManager(whitelistManagerAccount, { from: buyerA }));
+      await crowdsale.setWhitelistManager(whitelistManagerAccount, { from: owner }).should.be.fulfilled;
+    });
+
+    it('should update who can call addUsersWhitelistA and removeUsersWhitelistA', async () => {
+      crowdsale.addUsersWhitelistA([buyerA], { from: owner }).should.be.fulfilled;
+      crowdsale.removeUsersWhitelistA([buyerA], { from: owner }).should.be.fulfilled;
+      await crowdsale.setWhitelistManager(whitelistManagerAccount, { from: owner }).should.be.fulfilled;
+      await assertRevert(crowdsale.addUsersWhitelistA([buyerA], { from: owner }));
+      await assertRevert(crowdsale.removeUsersWhitelistA([buyerA], { from: owner }));
+      crowdsale.addUsersWhitelistA([buyerA], { from: whitelistManagerAccount }).should.be.fulfilled;
+      crowdsale.removeUsersWhitelistA([buyerA], { from: whitelistManagerAccount }).should.be.fulfilled;
+    });
+
+    it('should update who can call addUsersWhitelistB and removeUsersWhitelistB', async () => {
+      crowdsale.addUsersWhitelistB([buyerA], { from: owner }).should.be.fulfilled;
+      crowdsale.removeUsersWhitelistB([buyerA], { from: owner }).should.be.fulfilled;
+      await crowdsale.setWhitelistManager(whitelistManagerAccount, { from: owner }).should.be.fulfilled;
+      await assertRevert(crowdsale.addUsersWhitelistB([buyerA], { from: owner }));
+      await assertRevert(crowdsale.removeUsersWhitelistB([buyerA], { from: owner }));
+      crowdsale.addUsersWhitelistB([buyerA], { from: whitelistManagerAccount }).should.be.fulfilled;
+      crowdsale.removeUsersWhitelistB([buyerA], { from: whitelistManagerAccount }).should.be.fulfilled;
     });
   });
 
@@ -645,9 +685,12 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
   });
 
   describe('removeUsersWhitelistA()', () => {
-    it('should only be callable by owner', async () => {
+    it('should only be callable by whitelistManager', async () => {
       await crowdsale.removeUsersWhitelistA([buyerA], { from: owner }).should.be.fulfilled;
-      await assertRevert(crowdsale.removeUsersWhitelistA([buyerA], { from: buyerA }));
+      await assertRevert(crowdsale.removeUsersWhitelistA([buyerA], { from: whitelistManagerAccount }));
+      await crowdsale.setWhitelistManager(whitelistManagerAccount, { from: owner }).should.be.fulfilled;
+      await crowdsale.removeUsersWhitelistA([buyerA], { from: whitelistManagerAccount }).should.be.fulfilled;
+      await assertRevert(crowdsale.removeUsersWhitelistA([buyerA], { from: owner }));
     });
 
     it('should remove users currently on whitelist A', async () => {
@@ -660,9 +703,12 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
   });
 
   describe('removeUsersWhitelistB()', () => {
-    it('should only be callable by owner', async () => {
+    it('should only be callable by whitelistManager', async () => {
       await crowdsale.removeUsersWhitelistB([buyerA], { from: owner }).should.be.fulfilled;
-      await assertRevert(crowdsale.removeUsersWhitelistB([buyerA], { from: buyerA }));
+      await assertRevert(crowdsale.removeUsersWhitelistB([buyerA], { from: whitelistManagerAccount }));
+      await crowdsale.setWhitelistManager(whitelistManagerAccount, { from: owner }).should.be.fulfilled;
+      await crowdsale.removeUsersWhitelistB([buyerA], { from: whitelistManagerAccount }).should.be.fulfilled;
+      await assertRevert(crowdsale.removeUsersWhitelistB([buyerA], { from: owner }));
     });
 
     it('should remove users currently on whitelist B', async () => {
