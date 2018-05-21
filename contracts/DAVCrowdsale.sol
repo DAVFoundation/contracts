@@ -27,7 +27,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   // Maximal total contribution amount in Wei per beneficiary
   uint256 public maximalIndividualContribution;
   // Maximal acceptable gas price
-  uint256 public constant MAX_GAS_PRICE = 50000000000 wei;
+  uint256 public gasPriceLimit = 50000000000 wei;
   // Wallet to transfer foundation tokens to
   address public tokenWallet;
   // Wallet to transfer locked tokens to (e.g., presale buyers)
@@ -66,6 +66,15 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   modifier onlyWhitelisted(address _beneficiary) {
     require(whitelistA[_beneficiary] || (whitelistB[_beneficiary] && block.timestamp >= openingTimeB));
     _;
+  }
+
+  /**
+   * @dev Change the gas price limit
+   *
+   * @param _gasPriceLimit New gas price limit
+   */
+  function setGasPriceLimit(uint256 _gasPriceLimit) external onlyOwner {
+    gasPriceLimit = _gasPriceLimit;
   }
 
   /**
@@ -137,7 +146,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     // Verify amount is larger than or equal to minimal contribution
     require(_weiAmount >= minimalContribution);
     // Verify that the gas price is lower than 50 gwei
-    require(tx.gasprice <= MAX_GAS_PRICE);
+    require(tx.gasprice <= gasPriceLimit);
     // Verify that user hasn't contributed more than the individual hard cap
     require(contributions[_beneficiary].add(_weiAmount) <= maximalIndividualContribution);
   }

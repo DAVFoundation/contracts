@@ -71,6 +71,38 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
     });
   });
 
+  describe('gasPriceLimit()', () => {
+    it('should return the default limit of 50 gwei', async () => {
+      const gasPriceLimit = await crowdsale.gasPriceLimit();
+      gasPriceLimit.should.be.bignumber.equal(web3.toWei(50, 'gwei'));
+    });
+  });
+
+  describe('setGasPriceLimit()', () => {
+    it('should update the gas price limit in gasPriceLimit', async () => {
+      await crowdsale.setGasPriceLimit(web3.toWei(80, 'gwei'), { from: owner }).should.be.fulfilled;
+      const gasPriceLimit = await crowdsale.gasPriceLimit();
+      gasPriceLimit.should.be.bignumber.equal(web3.toWei(80, 'gwei'));
+    });
+
+    it('should only be callable by owner', async () => {
+      await crowdsale.setGasPriceLimit(web3.toWei(80, 'gwei'), { from: owner }).should.be.fulfilled;
+      await assertRevert(crowdsale.setGasPriceLimit(web3.toWei(80, 'gwei'), { from: buyerA }));
+    });
+
+    it('should allow to buy tokens with different gas prices', async () => {
+      await increaseTimeTo(openingTime);
+      await advanceBlock();
+
+      await assertRevert(crowdsale.sendTransaction({ from: buyerA, value, gasPrice: web3.toWei(50.1, 'gwei') }));
+      await crowdsale.setGasPriceLimit(web3.toWei(80, 'gwei'), { from: owner }).should.be.fulfilled;
+      await crowdsale.sendTransaction({ from: buyerA, value, gasPrice: web3.toWei(79, 'gwei') }).should.be.fulfilled;
+      await assertRevert(crowdsale.sendTransaction({ from: buyerA, value, gasPrice: web3.toWei(80.1, 'gwei') }));
+      await crowdsale.setGasPriceLimit(web3.toWei(90, 'gwei'), { from: owner }).should.be.fulfilled;
+      await crowdsale.sendTransaction({ from: buyerA, value, gasPrice: web3.toWei(80.1, 'gwei') }).should.be.fulfilled;
+    });
+  });
+
   describe('weiRaised()', () => {
 
     beforeEach(async () => {
