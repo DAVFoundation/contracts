@@ -82,7 +82,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
    *
    * @param _beneficiaries List of addresses to be whitelisted
    */
-  function whitelistUsersA(address[] _beneficiaries) external onlyOwner {
+  function addUsersWhitelistA(address[] _beneficiaries) external onlyOwner {
     for (uint256 i = 0; i < _beneficiaries.length; i++) {
       whitelistA[_beneficiaries[i]] = true;
     }
@@ -93,7 +93,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
    *
    * @param _beneficiaries List of addresses to be whitelisted
    */
-  function whitelistUsersB(address[] _beneficiaries) external onlyOwner {
+  function addUsersWhitelistB(address[] _beneficiaries) external onlyOwner {
     for (uint256 i = 0; i < _beneficiaries.length; i++) {
       whitelistB[_beneficiaries[i]] = true;
     }

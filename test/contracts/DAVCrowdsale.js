@@ -53,8 +53,8 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
     await token.transfer(crowdsale.address, totalSupply);
     await token.pause();
     await token.transferOwnership(crowdsale.address);
-    crowdsale.whitelistUsersA([buyerA]);
-    crowdsale.whitelistUsersB([buyerB]);
+    crowdsale.addUsersWhitelistA([buyerA]);
+    crowdsale.addUsersWhitelistB([buyerB]);
   });
 
   describe('tokenWallet()', () => {
