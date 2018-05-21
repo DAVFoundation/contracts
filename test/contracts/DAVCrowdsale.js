@@ -644,4 +644,34 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, buyerA, buyerB
     });
   });
 
+  describe('removeUsersWhitelistA()', () => {
+    it('should only be callable by owner', async () => {
+      await crowdsale.removeUsersWhitelistA([buyerA], { from: owner }).should.be.fulfilled;
+      await assertRevert(crowdsale.removeUsersWhitelistA([buyerA], { from: buyerA }));
+    });
+
+    it('should remove users currently on whitelist A', async () => {
+      await increaseTimeTo(openingTime);
+      await advanceBlock();
+      await crowdsale.sendTransaction({ from: buyerA, value }).should.be.fulfilled;
+      await crowdsale.removeUsersWhitelistA([buyerA]).should.be.fulfilled;
+      await assertRevert(crowdsale.sendTransaction({ from: buyerA, value }));
+    });
+  });
+
+  describe('removeUsersWhitelistB()', () => {
+    it('should only be callable by owner', async () => {
+      await crowdsale.removeUsersWhitelistB([buyerA], { from: owner }).should.be.fulfilled;
+      await assertRevert(crowdsale.removeUsersWhitelistB([buyerA], { from: buyerA }));
+    });
+
+    it('should remove users currently on whitelist B', async () => {
+      await increaseTimeTo(openingTimeB);
+      await advanceBlock();
+      await crowdsale.sendTransaction({ from: buyerB, value }).should.be.fulfilled;
+      await crowdsale.removeUsersWhitelistB([buyerB]).should.be.fulfilled;
+      await assertRevert(crowdsale.sendTransaction({ from: buyerB, value }));
+    });
+  });
+
 });

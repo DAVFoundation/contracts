@@ -100,6 +100,28 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   }
 
   /**
+   * Remove a group of users from whitelist A
+   *
+   * @param _beneficiaries List of addresses to be removed from whitelist
+   */
+  function removeUsersWhitelistA(address[] _beneficiaries) external onlyOwner {
+    for (uint256 i = 0; i < _beneficiaries.length; i++) {
+      whitelistA[_beneficiaries[i]] = false;
+    }
+  }
+
+  /**
+   * Remove a group of users from whitelist B
+   *
+   * @param _beneficiaries List of addresses to be removed from whitelist
+   */
+  function removeUsersWhitelistB(address[] _beneficiaries) external onlyOwner {
+    for (uint256 i = 0; i < _beneficiaries.length; i++) {
+      whitelistB[_beneficiaries[i]] = false;
+    }
+  }
+
+  /**
    * Allow adjustment of the closing time
    *
    * @param _closingTime Time to close the sale. If in the past will set to the present
