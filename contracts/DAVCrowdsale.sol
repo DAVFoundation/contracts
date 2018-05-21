@@ -61,6 +61,14 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
   }
 
   /**
+   * @dev Modifier to make a function callable only if user is in whitelist A, or in whitelist B and openingTimeB has passed
+   */
+  modifier onlyWhitelisted(address _beneficiary) {
+    require(whitelistA[_beneficiary] || (whitelistB[_beneficiary] && block.timestamp >= openingTimeB));
+    _;
+  }
+
+  /**
    * Add a group of users to whitelist A
    *
    * @param _beneficiaries List of addresses to be whitelisted
@@ -120,7 +128,7 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     token.transfer(lockedTokensWallet, _vinciAmount);
   }
 
-  function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal {
+  function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal onlyWhitelisted(_beneficiary) {
     super._preValidatePurchase(_beneficiary, _weiAmount);
     // Verify that the amount won't put us over the wei cap
     require(weiRaised.add(_weiAmount) <= weiCap);
@@ -132,8 +140,6 @@ contract DAVCrowdsale is PausableCrowdsale, FinalizableCrowdsale {
     require(tx.gasprice <= MAX_GAS_PRICE);
     // Verify that user hasn't contributed more than the individual hard cap
     require(contributions[_beneficiary].add(_weiAmount) <= maximalIndividualContribution);
-    // Verify that user is in whitelist A, or in whitelist B and openingTimeB has passed
-    require(whitelistA[_beneficiary] || (whitelistB[_beneficiary] && block.timestamp >= openingTimeB));
   }
 
   function _updatePurchasingState(address _beneficiary, uint256 _weiAmount) internal {
