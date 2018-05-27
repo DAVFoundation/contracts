@@ -53,7 +53,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, whitelistManag
     await token.transfer(crowdsale.address, totalSupply);
     await token.pause();
     await token.transferOwnership(crowdsale.address);
-    crowdsale.addUsersWhitelistA([buyerA]);
+    crowdsale.addUsersWhitelistA([buyerA], {});
     crowdsale.addUsersWhitelistB([buyerB]);
   });
 
@@ -348,6 +348,20 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, whitelistManag
         await crowdsale.buyTokens(buyerA, { from: buyerB, value });
         const balance = await token.balanceOf(buyerA);
         balance.should.be.bignumber.equal(expectedTokenAmount);
+      });
+
+      it('should not allow exploit of buyTokens for short address w/o trailing zeros', async function() {
+        const buyerShortenAddr = '0x24F761fF1b3C6C247233289f162D6a33F4d7CA';
+        const buyerFullAddrwTrrailingZeros = '0x24F761fF1b3C6C247233289f162D6a33F4d7CA00';
+        const buyerFullAddrwLeadZeros = '0x0024F761fF1b3C6C247233289f162D6a33F4d7CA';
+        crowdsale.addUsersWhitelistA([buyerShortenAddr]);
+        await crowdsale.buyTokens(buyerShortenAddr, { from: buyerB, value });
+        const balancewLeadZeros = await token.balanceOf(buyerFullAddrwLeadZeros);
+        const balancewTrrailingZeros = await token.balanceOf(buyerFullAddrwTrrailingZeros);
+        balancewLeadZeros.should.be.bignumber.equal(expectedTokenAmount);
+        balancewTrrailingZeros.should.be.bignumber.equal(0);
+        const crowdsaleBalance = await token.balanceOf(crowdsale.address);
+        crowdsaleBalance.should.be.bignumber.equal(totalSupply - expectedTokenAmount);
       });
 
       it('should forward funds to wallet', async () => {
