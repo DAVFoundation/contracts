@@ -1,4 +1,6 @@
-build:
+FORCE:
+
+build: FORCE
 	docker build --tag 'dav-contracts' .
 
 start: build
@@ -7,5 +9,5 @@ start: build
 start-bg: build
 	docker run --rm --name 'dav-contracts' -p 8545:8545 --network='dav' -d -v $${PWD}/build:/contracts/build dav-contracts
 
-stop:
+stop: FORCE
 	docker kill dav-contracts
