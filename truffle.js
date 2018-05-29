@@ -9,6 +9,14 @@ module.exports = {
         runs: 200
       }
     },
+    davtestnet: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, 'http://52.71.196.240:8545');
+      },
+      network_id: 2084,
+      gas: 4600000,
+      gasPrice: 1
+    },
     ropsten: {
       provider: function() {
         return new HDWalletProvider(mnemonic, 'https://ropsten.infura.io/wUiZtmeZ1KwjFrcC8zRO');

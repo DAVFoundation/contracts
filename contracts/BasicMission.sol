@@ -86,7 +86,7 @@ contract BasicMission {
     });
 
     // Event
-    Create(_missionId, _sellerId, _buyerId);
+    emit Create(_missionId, _sellerId, _buyerId);
   }
 
   /**
@@ -116,7 +116,7 @@ contract BasicMission {
     token.transferFrom(this, identity.getIdentityWallet(missions[_missionId].seller), missions[_missionId].cost);
 
     // Event
-    Signed(_missionId);
+    emit Signed(_missionId);
   }
 
 }
