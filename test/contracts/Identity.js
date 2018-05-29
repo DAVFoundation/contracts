@@ -1,6 +1,6 @@
 const Identity = artifacts.require('./Identity.sol');
 const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
-const expectThrow = require('../helpers/expectThrow');
+const expectThrow = require('../helpers/assertRevert');
 const { registerIdentity, sampleIdentities } = require('../helpers/identity');
 
 const deployContracts = async () => {
