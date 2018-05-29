@@ -1,4 +1,4 @@
-pragma solidity 0.4.23;
+pragma solidity ^0.4.15;
 
 import './Identity.sol';
 import './DAVToken.sol';

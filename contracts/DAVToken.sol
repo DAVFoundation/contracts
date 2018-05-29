@@ -1,4 +1,4 @@
-pragma solidity 0.4.23;
+pragma solidity ^0.4.23;
 
 import './interfaces/IDAVToken.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
