@@ -1,5 +1,6 @@
 {
   "globals": {
-    "artifacts": false
+    "artifacts": false,
+    "web3": false
   }
 }

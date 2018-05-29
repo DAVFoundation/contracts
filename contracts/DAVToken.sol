@@ -1,90 +1,58 @@
-pragma solidity ^0.4.15;
+pragma solidity 0.4.23;
 
-// solium-disable uppercase
-import 'openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
-import 'openzeppelin-solidity/contracts/lifecycle/Pausable.sol';
+import './interfaces/IDAVToken.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
+import './OwnedPausableToken.sol';
 
 
 /**
  * @title DAV Token
  * @dev ERC20 token
  */
-contract DAVToken is StandardToken, Pausable {
+contract DAVToken is IDAVToken, BurnableToken, OwnedPausableToken {
 
   // Token constants
-  // NOTE: These are placeholder values used during development. Final supply and precision to be determined later.
-  string public constant name = 'DAV Token';
-  string public constant symbol = 'DAV';
-  uint8 public constant decimals = 18;
-  uint256 public constant INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals)); // Number of tokens padded with 0s for number of decimal places
+  string public name = 'DAV Token';
+  string public symbol = 'DAV';
+  uint8 public decimals = 18;
+
+  // Time after which pause can no longer be called
+  uint256 public pauseCutoffTime;
 
   /**
    * @notice DAVToken constructor
-   * Runs once on initial contract creation. Sets total supply and balances.
+   * Runs once on initial contract creation. Sets initial supply and balances.
    */
-  function DAVToken() public {
-    totalSupply_ = INITIAL_SUPPLY;
-    balances[msg.sender] = INITIAL_SUPPLY;
+  constructor(uint256 _initialSupply) public {
+    totalSupply_ = _initialSupply;
+    balances[msg.sender] = totalSupply_;
   }
 
   /**
-  * @notice transfer token for a specified address
-  * @param _to The address to transfer to.
-  * @param _value The amount to be transferred.
-  */
-  function transfer(address _to, uint256 _value) public whenNotPaused returns (bool) {
-    return super.transfer(_to, _value);
-  }
-
-  /**
-   * @notice Transfer tokens from one address to another
-   * @param _from address The address which you want to send tokens from
-   * @param _to address The address which you want to transfer to
-   * @param _value uint256 the amount of tokens to be transferred
-   */
-  function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool) {
-    return super.transferFrom(_from, _to, _value);
-  }
-
-  /**
-   * @notice Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
+   * Set the cutoff time after which the token can no longer be paused
+   * Cannot be in the past. Can only be set once.
    *
-   * Beware that changing an allowance with this method brings the risk that someone may use both the old
-   * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
-   * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
-   * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-   * @param _spender The address which will spend the funds.
-   * @param _value The amount of tokens to be spent.
+   * @param _pauseCutoffTime Time for pause cutoff.
    */
-  function approve(address _spender, uint256 _value) public whenNotPaused returns (bool) {
-    return super.approve(_spender, _value);
+  function setPauseCutoffTime(uint256 _pauseCutoffTime) onlyOwner public {
+    // Make sure time is not in the past
+    // solium-disable-next-line security/no-block-members
+    require(_pauseCutoffTime >= block.timestamp);
+    // Make sure cutoff time hasn't been set already
+    require(pauseCutoffTime == 0);
+    // Set the cutoff time
+    pauseCutoffTime = _pauseCutoffTime;
   }
 
   /**
-   * @notice Increase the amount of tokens that an owner is allowed to a spender.
-   *
-   * approve should be called when allowed[_spender] == 0. To increment
-   * allowed value is better to use this function to avoid 2 calls (and wait until
-   * the first transaction is mined)
-   * From MonolithDAO Token.sol
-   * @param _spender The address which will spend the funds.
-   * @param _addedValue The amount of tokens to increase the allowance by.
+   * @dev called by the owner to pause, triggers stopped state
    */
-  function increaseApproval(address _spender, uint _addedValue) public whenNotPaused returns (bool success) {
-    return super.increaseApproval(_spender, _addedValue);
+  function pause() onlyOwner whenNotPaused public {
+    // Make sure pause cut off time isn't set or if it is, it's in the future
+    // solium-disable-next-line security/no-block-members
+    require(pauseCutoffTime == 0 || pauseCutoffTime >= block.timestamp);
+    paused = true;
+    emit Pause();
   }
 
-  /**
-   * @notice Decrease the amount of tokens that an owner allowed to a spender.
-   *
-   * approve should be called when allowed[_spender] == 0. To decrement
-   * allowed value is better to use this function to avoid 2 calls (and wait until
-   * the first transaction is mined)
-   * From MonolithDAO Token.sol
-   * @param _spender The address which will spend the funds.
-   * @param _subtractedValue The amount of tokens to decrease the allowance by.
-   */
-  function decreaseApproval(address _spender, uint _subtractedValue) public whenNotPaused returns (bool success) {
-    return super.decreaseApproval(_spender, _subtractedValue);
-  }
 }

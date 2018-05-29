@@ -4,7 +4,7 @@ const BasicMission = artifacts.require('./BasicMission.sol');
 const uuid = require('uuid/v4');
 
 const { registerIdentity, sampleIdentities } = require('../helpers/identity');
-const expectThrow = require('../helpers/expectThrow');
+const expectThrow = require('../helpers/assertRevert');
 
 const deployContracts = async () => {
   const TokenContract = await DAVToken.new();
