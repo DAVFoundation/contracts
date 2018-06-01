@@ -645,7 +645,7 @@ contract('DAVCrowdsale', ([owner, bank, foundation, lockedTokens, whitelistManag
       finalizeLogs = (await crowdsale.finalize({ from: owner })).logs;
     });
 
-    it('should transfer tokens to foundation wallet worth 50% more than number of tokens raised (%40 to %60)', async () => {
+    it('should transfer tokens to foundation wallet worth 50% more than number of tokens raised (%40 to %60 ratio)', async () => {
       const expectedFoundationTokens = tokensSold.mul(1.5);
       const balance = await token.balanceOf(foundation);
       balance.should.be.bignumber.equal(expectedFoundationTokens);
