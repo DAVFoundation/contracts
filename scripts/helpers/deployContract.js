@@ -44,7 +44,7 @@ module.exports = function deploy(
         console.log(contract.contractName, instance.options.address);
         let json = JSON.stringify(contract); //convert it back to json
         fs.writeFileSync(`${__dirname}/${artifactFile}`, json);
-        resolve(contract);
+        resolve(instance.options.address);
       })
       .catch(err => {
         reject(err);
