@@ -15,6 +15,7 @@ const {
   foundationMultisigRequirement,
   lockedTokensMultisigOwners,
   lockedTokensMultisigRequirement,
+  whitelistManager,
   totalSupply,
   rate,
   weiCap,
@@ -37,6 +38,11 @@ let DAVCrowdsale = require(DAVCrowdsaleFile);
 // Initialize Web3
 const web3Provider = new HDWalletProvider(mnemonic, ethNodeUrl);
 const web3 = new Web3(web3Provider);
+const defaultTransactionOptions = {
+  from: deployerAddress,
+  gas: 6712388,
+  gasPrice: '15000000000',
+};
 
 async function deploySequence() {
   // Deploy MultiSigWallet for Ether Bank
@@ -123,6 +129,9 @@ async function deploySequence() {
     ],
     DAVCrowdsaleFile,
   );
+
+  // Change whitelist manager
+  await DAVCrowdsaleInstance.methods.setWhitelistManager(whitelistManager).send(defaultTransactionOptions);
 }
 
 deploySequence().then(() => console.log('done')).catch(err => console.log(err));

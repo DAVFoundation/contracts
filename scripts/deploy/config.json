@@ -11,6 +11,7 @@
   "foundationMultisigRequirement": 2,
   "lockedTokensMultisigOwners": ["0x80c61a9da0d44c23e95333c5c6b9771e42afdc5c", "0x6ddbcf6a426baa99e88de11cdb72ecab3893efe6", "0x34d113758c980a0bf716a270bd4c80d1e4d2fd7a"],
   "lockedTokensMultisigRequirement": 2,
+  "whitelistManager": "0x84a1ee68a472d49b78b23974c36805b8cc351695",
   "totalSupply": "1771428571000000000000000000",
   "rate": "10000",
   "weiCap": "54286000000000000000000",
