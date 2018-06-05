@@ -41,7 +41,6 @@ module.exports = function deploy(
           };
         }
         contract.networks[ethNetworkId].address = instance.options.address;
-        console.log(contract.contractName, instance.options.address);
         let json = JSON.stringify(contract); //convert it back to json
         fs.writeFileSync(`${__dirname}/${artifactFile}`, json);
         resolve(instance);

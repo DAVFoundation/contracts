@@ -57,6 +57,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
+  console.log('Deployed MultiSigWallet for Ether Bank', bankMultisigInstance._address);
 
   // Deploy MultiSigWallet for Foundation DAVs
   const foundationMultisigInstance = await deployContract(
@@ -70,6 +71,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
+  console.log('Deployed MultiSigWallet for Foundation DAVs', foundationMultisigInstance._address);
 
   // Deploy MultiSigWallet for contract owner
   const ownerMultisigInstance = await deployContract(
@@ -83,6 +85,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
+  console.log('Deployed MultiSigWallet for contract owner', ownerMultisigInstance._address);
 
   // Deploy MultiSigWallet for locked DAV tokens
   const lockedTokensMultisigInstance = await deployContract(
@@ -96,6 +99,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
+  console.log('Deployed MultiSigWallet for locked DAV tokens', lockedTokensMultisigInstance._address);
 
   // Deploy DAVToken
   const DAVTokenInstance = await deployContract(
@@ -106,6 +110,7 @@ async function deploySequence() {
     [totalSupply],
     DAVTokenFile,
   );
+  console.log('Deployed DAVToken', DAVTokenInstance._address);
 
   // Deploy DAVCrowdsale
   const DAVCrowdsaleInstance = await deployContract(
@@ -129,15 +134,19 @@ async function deploySequence() {
     ],
     DAVCrowdsaleFile,
   );
+  console.log('Deployed DAVCrowdsale', DAVCrowdsaleInstance._address);
 
   // Change whitelist manager
   await DAVCrowdsaleInstance.methods.setWhitelistManager(whitelistManager).send(defaultTransactionOptions);
+  console.log('Change whitelist manager', whitelistManager);
 
   // Transfer Token ownership to Crowdsale
   await DAVTokenInstance.methods.transferOwnership(DAVCrowdsaleInstance._address).send(defaultTransactionOptions);
+  console.log('Transfer Token ownership to Crowdsale', DAVCrowdsaleInstance._address);
 
   // Transfer Crowdsale ownership to multisig
   await DAVCrowdsaleInstance.methods.transferOwnership(ownerMultisigInstance._address).send(defaultTransactionOptions);
+  console.log('Transfer Crowdsale ownership to multisig', ownerMultisigInstance._address);
 }
 
 deploySequence().then(() => console.log('done')).catch(err => console.log(err));
