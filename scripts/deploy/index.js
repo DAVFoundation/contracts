@@ -6,11 +6,15 @@ const {
   ethNodeUrl,
   ethNetworkId,
   mnemonic,
+  deployerAddress,
   bankMultisigOwners,
   bankMultisigRequirement,
-  ownerAddress,
-  foundationAddress,
-  lockedTokensAddress,
+  ownerMultisigOwners,
+  ownerMultisigRequirement,
+  foundationMultisigOwners,
+  foundationMultisigRequirement,
+  lockedTokensMultisigOwners,
+  lockedTokensMultisigRequirement,
   totalSupply,
   rate,
   weiCap,
@@ -39,7 +43,7 @@ async function deploySequence() {
   const bankAddress = await deployContract(
     ethNetworkId,
     web3,
-    ownerAddress,
+    deployerAddress,
     MultiSigWallet,
     [
       bankMultisigOwners,
@@ -48,11 +52,50 @@ async function deploySequence() {
     MultiSigWalletFile,
   );
 
+  // Deploy MultiSigWallet for Foundation DAVs
+  const foundationAddress = await deployContract(
+    ethNetworkId,
+    web3,
+    deployerAddress,
+    MultiSigWallet,
+    [
+      foundationMultisigOwners,
+      foundationMultisigRequirement,
+    ],
+    MultiSigWalletFile,
+  );
+
+  // Deploy MultiSigWallet for contract owner
+  const ownerAddress = await deployContract(
+    ethNetworkId,
+    web3,
+    deployerAddress,
+    MultiSigWallet,
+    [
+      ownerMultisigOwners,
+      ownerMultisigRequirement,
+    ],
+    MultiSigWalletFile,
+  );
+
+  // Deploy MultiSigWallet for locked DAV tokens
+  const lockedTokensAddress = await deployContract(
+    ethNetworkId,
+    web3,
+    deployerAddress,
+    MultiSigWallet,
+    [
+      lockedTokensMultisigOwners,
+      lockedTokensMultisigRequirement,
+    ],
+    MultiSigWalletFile,
+  );
+
   // Deploy DAVToken
   const DAVTokenAddress = await deployContract(
     ethNetworkId,
     web3,
-    ownerAddress,
+    deployerAddress,
     DAVToken,
     [totalSupply],
     DAVTokenFile,
@@ -62,7 +105,7 @@ async function deploySequence() {
   const DAVCrowdsaleAddress = await deployContract(
     ethNetworkId,
     web3,
-    ownerAddress,
+    deployerAddress,
     DAVCrowdsale,
     [
       rate,
