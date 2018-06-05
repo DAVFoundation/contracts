@@ -64,8 +64,6 @@ async function deploySequence() {
     ],
     DAVCrowdsaleFile,
   );
-
-  console.log('done');
 }
 
-deploySequence().catch(err => console.log(err));
+deploySequence().then(() => console.log('done')).catch(err => console.log(err));
