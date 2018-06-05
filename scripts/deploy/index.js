@@ -2,6 +2,10 @@
 const Web3 = require('web3');
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const deployContract = require('../helpers/deployContract');
+const chalk = require('chalk');
+const chalkAddr = chalk.bold.green;
+const chalkDone = chalk.bold.bgGreen;
+const chalkError = chalk.bold.bgRed;
 const {
   ethNodeUrl,
   ethNetworkId,
@@ -57,7 +61,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for Ether Bank', bankMultisigInstance._address);
+  console.log('Deployed MultiSigWallet for Ether Bank', chalkAddr(bankMultisigInstance._address));
 
   // Deploy MultiSigWallet for Foundation DAVs
   const foundationMultisigInstance = await deployContract(
@@ -71,7 +75,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for Foundation DAVs', foundationMultisigInstance._address);
+  console.log('Deployed MultiSigWallet for Foundation DAVs', chalkAddr(foundationMultisigInstance._address));
 
   // Deploy MultiSigWallet for contract owner
   const ownerMultisigInstance = await deployContract(
@@ -85,7 +89,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for contract owner', ownerMultisigInstance._address);
+  console.log('Deployed MultiSigWallet for contract owner', chalkAddr(ownerMultisigInstance._address));
 
   // Deploy MultiSigWallet for locked DAV tokens
   const lockedTokensMultisigInstance = await deployContract(
@@ -99,7 +103,7 @@ async function deploySequence() {
     ],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for locked DAV tokens', lockedTokensMultisigInstance._address);
+  console.log('Deployed MultiSigWallet for locked DAV tokens', chalkAddr(lockedTokensMultisigInstance._address));
 
   // Deploy DAVToken
   const DAVTokenInstance = await deployContract(
@@ -110,7 +114,7 @@ async function deploySequence() {
     [totalSupply],
     DAVTokenFile,
   );
-  console.log('Deployed DAVToken', DAVTokenInstance._address);
+  console.log('Deployed DAVToken', chalkAddr(DAVTokenInstance._address));
 
   // Deploy DAVCrowdsale
   const DAVCrowdsaleInstance = await deployContract(
@@ -134,19 +138,19 @@ async function deploySequence() {
     ],
     DAVCrowdsaleFile,
   );
-  console.log('Deployed DAVCrowdsale', DAVCrowdsaleInstance._address);
+  console.log('Deployed DAVCrowdsale', chalkAddr(DAVCrowdsaleInstance._address));
 
   // Change whitelist manager
   await DAVCrowdsaleInstance.methods.setWhitelistManager(whitelistManager).send(defaultTransactionOptions);
-  console.log('Change whitelist manager', whitelistManager);
+  console.log('Change whitelist manager', chalkAddr(whitelistManager));
 
   // Transfer Token ownership to Crowdsale
   await DAVTokenInstance.methods.transferOwnership(DAVCrowdsaleInstance._address).send(defaultTransactionOptions);
-  console.log('Transfer Token ownership to Crowdsale', DAVCrowdsaleInstance._address);
+  console.log('Transfer Token ownership to Crowdsale', chalkAddr(DAVCrowdsaleInstance._address));
 
   // Transfer Crowdsale ownership to multisig
   await DAVCrowdsaleInstance.methods.transferOwnership(ownerMultisigInstance._address).send(defaultTransactionOptions);
-  console.log('Transfer Crowdsale ownership to multisig', ownerMultisigInstance._address);
+  console.log('Transfer Crowdsale ownership to multisig', chalkAddr(ownerMultisigInstance._address));
 }
 
-deploySequence().then(() => console.log('done')).catch(err => console.log(err));
+deploySequence().then(() => console.log(chalkDone('Deployment complete'))).catch(err => console.log(chalkError(err)));
