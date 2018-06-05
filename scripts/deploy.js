@@ -12,7 +12,8 @@ let DAVCrowdsale = require(DAVCrowdsaleFile);
 // Configuration
 const ETH_NODE_URL = 'http://localhost:8545';
 const ETH_NETWORK_ID = '1527775870202';
-const mnemonic = 'enforce budget dog forest market habit wasp slot another amused genuine scheme';
+const mnemonic =
+  'enforce budget dog forest market habit wasp slot another amused genuine scheme';
 const ownerAddress = '0xc32f8fe0a1cc707314d4cfc4ce70a54eb0f45ce7';
 const bankAddress = '0x84a1ee68a472d49b78b23974c36805b8cc351695';
 const foundationAddress = '0x7446d4c07c83ea6e854b6f7b8c8c513a3ef7235a';
@@ -34,31 +35,43 @@ const vinciCap = web3.utils.toWei('708571429');
 const minimalContribution = web3.utils.toWei('0.2', 'ether');
 const maximalIndividualContribution = web3.utils.toWei('150', 'ether');
 // Sale time
-const openingTime = Date.parse('11 June 2018 13:00:00 GMT')/1000;
-const openingTimeB = Date.parse('11 June 2018 18:00:00 GMT')/1000;
-const closingTime = Date.parse('25 June 2018 13:00:00 GMT')/1000;
-
+const openingTime = Date.parse('11 June 2018 13:00:00 GMT') / 1000;
+const openingTimeB = Date.parse('11 June 2018 18:00:00 GMT') / 1000;
+const closingTime = Date.parse('25 June 2018 13:00:00 GMT') / 1000;
 
 async function deploySequence() {
-  await deployContract(ETH_NETWORK_ID, web3, ownerAddress, DAVToken, [totalSupply], DAVTokenFile);
+  await deployContract(
+    ETH_NETWORK_ID,
+    web3,
+    ownerAddress,
+    DAVToken,
+    [totalSupply],
+    DAVTokenFile,
+  );
 
-  await deployContract(ETH_NETWORK_ID, web3, ownerAddress, DAVCrowdsale, [
-    rate,
-    bankAddress,
-    foundationAddress,
-    lockedTokensAddress,
-    DAVToken.networks[ETH_NETWORK_ID].address,
-    weiCap,
-    vinciCap,
-    minimalContribution,
-    maximalIndividualContribution,
-    openingTime,
-    openingTimeB,
-    closingTime
-  ], DAVCrowdsaleFile);
+  await deployContract(
+    ETH_NETWORK_ID,
+    web3,
+    ownerAddress,
+    DAVCrowdsale,
+    [
+      rate,
+      bankAddress,
+      foundationAddress,
+      lockedTokensAddress,
+      DAVToken.networks[ETH_NETWORK_ID].address,
+      weiCap,
+      vinciCap,
+      minimalContribution,
+      maximalIndividualContribution,
+      openingTime,
+      openingTimeB,
+      closingTime,
+    ],
+    DAVCrowdsaleFile,
+  );
 
   console.log('done');
 }
 
-
-deploySequence().catch((err) => console.log(err));
+deploySequence().catch(err => console.log(err));
