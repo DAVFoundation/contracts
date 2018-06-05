@@ -2,7 +2,24 @@
 const Web3 = require('web3');
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const deployContract = require('../helpers/deployContract');
-const { ethNodeUrl, ethNetworkId, mnemonic, ownerAddress, bankAddress, foundationAddress, lockedTokensAddress, totalSupply, rate, weiCap, vinciCap, minimalContribution, maximalIndividualContribution, openingTime, openingTimeB, closingTime } = require('./config');
+const {
+  ethNodeUrl,
+  ethNetworkId,
+  mnemonic,
+  ownerAddress,
+  bankAddress,
+  foundationAddress,
+  lockedTokensAddress,
+  totalSupply,
+  rate,
+  weiCap,
+  vinciCap,
+  minimalContribution,
+  maximalIndividualContribution,
+  openingTime,
+  openingTimeB,
+  closingTime,
+} = require('./config');
 
 // Contracts
 let DAVTokenFile = '../../build/contracts/DAVToken.json';
