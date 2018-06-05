@@ -22,7 +22,9 @@ module.exports = function deploy(
           gasPrice: '15000000000',
         },
         (error, transactionHash, a) => {
-          console.log('callback', error, transactionHash, a);
+          if (a) {
+            console.log(a);
+          }
           if (error) {
             console.log(error);
             reject(error);
