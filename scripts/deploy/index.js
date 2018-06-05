@@ -132,6 +132,9 @@ async function deploySequence() {
 
   // Change whitelist manager
   await DAVCrowdsaleInstance.methods.setWhitelistManager(whitelistManager).send(defaultTransactionOptions);
+
+  // Change Crowdsale owner
+  await DAVCrowdsaleInstance.methods.transferOwnership(ownerMultisigInstance._address).send(defaultTransactionOptions);
 }
 
 deploySequence().then(() => console.log('done')).catch(err => console.log(err));
