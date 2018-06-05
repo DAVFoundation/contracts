@@ -133,7 +133,10 @@ async function deploySequence() {
   // Change whitelist manager
   await DAVCrowdsaleInstance.methods.setWhitelistManager(whitelistManager).send(defaultTransactionOptions);
 
-  // Change Crowdsale owner
+  // Transfer Token ownership to Crowdsale
+  await DAVTokenInstance.methods.transferOwnership(DAVCrowdsaleInstance._address).send(defaultTransactionOptions);
+
+  // Transfer Crowdsale ownership to multisig
   await DAVCrowdsaleInstance.methods.transferOwnership(ownerMultisigInstance._address).send(defaultTransactionOptions);
 }
 
