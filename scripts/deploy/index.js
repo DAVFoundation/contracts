@@ -55,13 +55,13 @@ async function deploySequence() {
     web3,
     deployerAddress,
     MultiSigWallet,
-    [
-      bankMultisigOwners,
-      bankMultisigRequirement,
-    ],
+    [bankMultisigOwners, bankMultisigRequirement],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for Ether Bank', chalkAddr(bankMultisigInstance._address));
+  console.log(
+    'Deployed MultiSigWallet for Ether Bank',
+    chalkAddr(bankMultisigInstance._address),
+  );
 
   // Deploy MultiSigWallet for Foundation DAVs
   const foundationMultisigInstance = await deployContract(
@@ -69,13 +69,13 @@ async function deploySequence() {
     web3,
     deployerAddress,
     MultiSigWallet,
-    [
-      foundationMultisigOwners,
-      foundationMultisigRequirement,
-    ],
+    [foundationMultisigOwners, foundationMultisigRequirement],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for Foundation DAVs', chalkAddr(foundationMultisigInstance._address));
+  console.log(
+    'Deployed MultiSigWallet for Foundation DAVs',
+    chalkAddr(foundationMultisigInstance._address),
+  );
 
   // Deploy MultiSigWallet for contract owner
   const ownerMultisigInstance = await deployContract(
@@ -83,13 +83,13 @@ async function deploySequence() {
     web3,
     deployerAddress,
     MultiSigWallet,
-    [
-      ownerMultisigOwners,
-      ownerMultisigRequirement,
-    ],
+    [ownerMultisigOwners, ownerMultisigRequirement],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for contract owner', chalkAddr(ownerMultisigInstance._address));
+  console.log(
+    'Deployed MultiSigWallet for contract owner',
+    chalkAddr(ownerMultisigInstance._address),
+  );
 
   // Deploy MultiSigWallet for locked DAV tokens
   const lockedTokensMultisigInstance = await deployContract(
@@ -97,13 +97,13 @@ async function deploySequence() {
     web3,
     deployerAddress,
     MultiSigWallet,
-    [
-      lockedTokensMultisigOwners,
-      lockedTokensMultisigRequirement,
-    ],
+    [lockedTokensMultisigOwners, lockedTokensMultisigRequirement],
     MultiSigWalletFile,
   );
-  console.log('Deployed MultiSigWallet for locked DAV tokens', chalkAddr(lockedTokensMultisigInstance._address));
+  console.log(
+    'Deployed MultiSigWallet for locked DAV tokens',
+    chalkAddr(lockedTokensMultisigInstance._address),
+  );
 
   // Deploy DAVToken
   const DAVTokenInstance = await deployContract(
@@ -138,19 +138,36 @@ async function deploySequence() {
     ],
     DAVCrowdsaleFile,
   );
-  console.log('Deployed DAVCrowdsale', chalkAddr(DAVCrowdsaleInstance._address));
+  console.log(
+    'Deployed DAVCrowdsale',
+    chalkAddr(DAVCrowdsaleInstance._address),
+  );
 
   // Change whitelist manager
-  await DAVCrowdsaleInstance.methods.setWhitelistManager(whitelistManager).send(defaultTransactionOptions);
+  await DAVCrowdsaleInstance.methods
+    .setWhitelistManager(whitelistManager)
+    .send(defaultTransactionOptions);
   console.log('Change whitelist manager', chalkAddr(whitelistManager));
 
   // Transfer Token ownership to Crowdsale
-  await DAVTokenInstance.methods.transferOwnership(DAVCrowdsaleInstance._address).send(defaultTransactionOptions);
-  console.log('Transfer Token ownership to Crowdsale', chalkAddr(DAVCrowdsaleInstance._address));
+  await DAVTokenInstance.methods
+    .transferOwnership(DAVCrowdsaleInstance._address)
+    .send(defaultTransactionOptions);
+  console.log(
+    'Transfer Token ownership to Crowdsale',
+    chalkAddr(DAVCrowdsaleInstance._address),
+  );
 
   // Transfer Crowdsale ownership to multisig
-  await DAVCrowdsaleInstance.methods.transferOwnership(ownerMultisigInstance._address).send(defaultTransactionOptions);
-  console.log('Transfer Crowdsale ownership to multisig', chalkAddr(ownerMultisigInstance._address));
+  await DAVCrowdsaleInstance.methods
+    .transferOwnership(ownerMultisigInstance._address)
+    .send(defaultTransactionOptions);
+  console.log(
+    'Transfer Crowdsale ownership to multisig',
+    chalkAddr(ownerMultisigInstance._address),
+  );
 }
 
-deploySequence().then(() => console.log(chalkDone('Deployment complete'))).catch(err => console.log(chalkError(err)));
+deploySequence()
+  .then(() => console.log(chalkDone('Deployment complete')))
+  .catch(err => console.log(chalkError(err)));
