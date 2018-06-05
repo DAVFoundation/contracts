@@ -40,7 +40,7 @@ const web3 = new Web3(web3Provider);
 
 async function deploySequence() {
   // Deploy MultiSigWallet for Ether Bank
-  const bankAddress = await deployContract(
+  const bankMultisigInstance = await deployContract(
     ethNetworkId,
     web3,
     deployerAddress,
@@ -53,7 +53,7 @@ async function deploySequence() {
   );
 
   // Deploy MultiSigWallet for Foundation DAVs
-  const foundationAddress = await deployContract(
+  const foundationMultisigInstance = await deployContract(
     ethNetworkId,
     web3,
     deployerAddress,
@@ -66,7 +66,7 @@ async function deploySequence() {
   );
 
   // Deploy MultiSigWallet for contract owner
-  const ownerAddress = await deployContract(
+  const ownerMultisigInstance = await deployContract(
     ethNetworkId,
     web3,
     deployerAddress,
@@ -79,7 +79,7 @@ async function deploySequence() {
   );
 
   // Deploy MultiSigWallet for locked DAV tokens
-  const lockedTokensAddress = await deployContract(
+  const lockedTokensMultisigInstance = await deployContract(
     ethNetworkId,
     web3,
     deployerAddress,
@@ -92,7 +92,7 @@ async function deploySequence() {
   );
 
   // Deploy DAVToken
-  const DAVTokenAddress = await deployContract(
+  const DAVTokenInstance = await deployContract(
     ethNetworkId,
     web3,
     deployerAddress,
@@ -102,17 +102,17 @@ async function deploySequence() {
   );
 
   // Deploy DAVCrowdsale
-  const DAVCrowdsaleAddress = await deployContract(
+  const DAVCrowdsaleInstance = await deployContract(
     ethNetworkId,
     web3,
     deployerAddress,
     DAVCrowdsale,
     [
       rate,
-      bankAddress,
-      foundationAddress,
-      lockedTokensAddress,
-      DAVTokenAddress,
+      bankMultisigInstance._address,
+      foundationMultisigInstance._address,
+      lockedTokensMultisigInstance._address,
+      DAVTokenInstance._address,
       weiCap,
       vinciCap,
       minimalContribution,
