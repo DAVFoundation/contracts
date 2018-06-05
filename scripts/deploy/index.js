@@ -149,6 +149,15 @@ async function deploySequence() {
     .send(defaultTransactionOptions);
   console.log('Change whitelist manager', chalkAddr(whitelistManager));
 
+  // Transfer all tokens to crowdsale contract
+  await DAVTokenInstance.methods
+    .transfer(DAVCrowdsaleInstance._address, totalSupply)
+    .send(defaultTransactionOptions);
+  console.log(
+    'Transfer all tokens to crowdsale contract',
+    chalkAddr(DAVCrowdsaleInstance._address),
+  );
+
   // Transfer Token ownership to Crowdsale
   await DAVTokenInstance.methods
     .transferOwnership(DAVCrowdsaleInstance._address)
