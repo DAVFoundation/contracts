@@ -1,0 +1,18 @@
+{
+  "ethNodeUrl": "http://localhost:8545",
+  "ethNetworkId": "1527775870202",
+  "mnemonic": "enforce budget dog forest market habit wasp slot another amused genuine scheme",
+  "ownerAddress": "0xc32f8fe0a1cc707314d4cfc4ce70a54eb0f45ce7",
+  "bankAddress": "0x84a1ee68a472d49b78b23974c36805b8cc351695",
+  "foundationAddress": "0x7446d4c07c83ea6e854b6f7b8c8c513a3ef7235a",
+  "lockedTokensAddress": "0xedf100d5ed9b5215837317cb2162461226f30f6c",
+  "totalSupply": "1771428571000000000000000000",
+  "rate": "10000",
+  "weiCap": "54286000000000000000000",
+  "vinciCap": "708571429000000000000000000",
+  "minimalContribution": "200000000000000000",
+  "maximalIndividualContribution": "150000000000000000000",
+  "openingTime": "1528722000",
+  "openingTimeB": "1528740000",
+  "closingTime": "1529931600"
+}
