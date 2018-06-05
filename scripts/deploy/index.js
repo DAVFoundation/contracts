@@ -1,12 +1,12 @@
 // Requirements
 const Web3 = require('web3');
 const HDWalletProvider = require('truffle-hdwallet-provider');
-const deployContract = require('./helpers/deployContract');
+const deployContract = require('../helpers/deployContract');
 
 // Contracts
-let DAVTokenFile = '../build/contracts/DAVToken.json';
+let DAVTokenFile = '../../build/contracts/DAVToken.json';
 let DAVToken = require(DAVTokenFile);
-let DAVCrowdsaleFile = '../build/contracts/DAVCrowdsale.json';
+let DAVCrowdsaleFile = '../../build/contracts/DAVCrowdsale.json';
 let DAVCrowdsale = require(DAVCrowdsaleFile);
 
 // Configuration

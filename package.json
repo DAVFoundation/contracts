@@ -11,7 +11,7 @@
   "author": "Tal Ater <tal@talater.com>",
   "scripts": {
     "build": "./node_modules/.bin/truffle compile",
-    "deploy": "node ./scripts/deploy.js",
+    "deploy": "node ./scripts/deploy",
     "lint": "./node_modules/.bin/solium --dir ./contracts",
     "test": "./node_modules/.bin/truffle test"
   },
