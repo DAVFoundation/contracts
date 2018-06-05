@@ -32,7 +32,8 @@ const web3Provider = new HDWalletProvider(mnemonic, ethNodeUrl);
 const web3 = new Web3(web3Provider);
 
 async function deploySequence() {
-  await deployContract(
+  // Deploy DAVToken
+  const DAVTokenAddress = await deployContract(
     ethNetworkId,
     web3,
     ownerAddress,
@@ -41,7 +42,8 @@ async function deploySequence() {
     DAVTokenFile,
   );
 
-  await deployContract(
+  // Deploy DAVCrowdsale
+  const DAVCrowdsaleAddress = await deployContract(
     ethNetworkId,
     web3,
     ownerAddress,
@@ -51,7 +53,7 @@ async function deploySequence() {
       bankAddress,
       foundationAddress,
       lockedTokensAddress,
-      DAVToken.networks[ethNetworkId].address,
+      DAVTokenAddress,
       weiCap,
       vinciCap,
       minimalContribution,
