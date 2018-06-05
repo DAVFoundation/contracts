@@ -154,8 +154,15 @@ async function deploySequence() {
     .transfer(DAVCrowdsaleInstance._address, totalSupply)
     .send(defaultTransactionOptions);
   console.log(
-    'Transfer all tokens to crowdsale contract',
-    chalkAddr(DAVCrowdsaleInstance._address),
+    'Transfer all tokens to crowdsale contract'
+  );
+
+  // Pause token
+  await DAVTokenInstance.methods
+    .pause()
+    .send(defaultTransactionOptions);
+  console.log(
+    'Pause token'
   );
 
   // Transfer Token ownership to Crowdsale
