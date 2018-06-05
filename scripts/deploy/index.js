@@ -6,8 +6,9 @@ const {
   ethNodeUrl,
   ethNetworkId,
   mnemonic,
+  bankMultisigOwners,
+  bankMultisigRequirement,
   ownerAddress,
-  bankAddress,
   foundationAddress,
   lockedTokensAddress,
   totalSupply,
@@ -22,6 +23,8 @@ const {
 } = require('./config');
 
 // Contracts
+let MultiSigWalletFile = '../../build/contracts/MultiSigWallet.json';
+let MultiSigWallet = require(MultiSigWalletFile);
 let DAVTokenFile = '../../build/contracts/DAVToken.json';
 let DAVToken = require(DAVTokenFile);
 let DAVCrowdsaleFile = '../../build/contracts/DAVCrowdsale.json';
@@ -32,6 +35,19 @@ const web3Provider = new HDWalletProvider(mnemonic, ethNodeUrl);
 const web3 = new Web3(web3Provider);
 
 async function deploySequence() {
+  // Deploy MultiSigWallet for Ether Bank
+  const bankAddress = await deployContract(
+    ethNetworkId,
+    web3,
+    ownerAddress,
+    MultiSigWallet,
+    [
+      bankMultisigOwners,
+      bankMultisigRequirement,
+    ],
+    MultiSigWalletFile,
+  );
+
   // Deploy DAVToken
   const DAVTokenAddress = await deployContract(
     ethNetworkId,
