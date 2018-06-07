@@ -58,9 +58,10 @@ async function deploySequence() {
     [bankMultisigOwners, bankMultisigRequirement],
     MultiSigWalletFile,
   );
+  let bankMultisigInstanceAddress = bankMultisigInstance._address;
   console.log(
     'Deployed MultiSigWallet for Ether Bank',
-    chalkAddr(bankMultisigInstance._address),
+    chalkAddr(bankMultisigInstanceAddress),
   );
 
   // Deploy MultiSigWallet for Foundation DAVs
@@ -72,9 +73,10 @@ async function deploySequence() {
     [foundationMultisigOwners, foundationMultisigRequirement],
     MultiSigWalletFile,
   );
+  let foundationMultisigInstanceAddress = foundationMultisigInstance._address;
   console.log(
     'Deployed MultiSigWallet for Foundation DAVs',
-    chalkAddr(foundationMultisigInstance._address),
+    chalkAddr(foundationMultisigInstanceAddress),
   );
 
   // Deploy MultiSigWallet for contract owner
@@ -86,9 +88,10 @@ async function deploySequence() {
     [ownerMultisigOwners, ownerMultisigRequirement],
     MultiSigWalletFile,
   );
+  let ownerMultisigInstanceAddress = ownerMultisigInstance._address;
   console.log(
     'Deployed MultiSigWallet for contract owner',
-    chalkAddr(ownerMultisigInstance._address),
+    chalkAddr(ownerMultisigInstanceAddress),
   );
 
   // Deploy MultiSigWallet for locked DAV tokens
@@ -100,9 +103,10 @@ async function deploySequence() {
     [lockedTokensMultisigOwners, lockedTokensMultisigRequirement],
     MultiSigWalletFile,
   );
+  let lockedTokensMultisigInstanceAddress = lockedTokensMultisigInstance._address;
   console.log(
     'Deployed MultiSigWallet for locked DAV tokens',
-    chalkAddr(lockedTokensMultisigInstance._address),
+    chalkAddr(lockedTokensMultisigInstanceAddress),
   );
 
   // Deploy DAVToken
@@ -124,9 +128,9 @@ async function deploySequence() {
     DAVCrowdsale,
     [
       rate,
-      bankMultisigInstance._address,
-      foundationMultisigInstance._address,
-      lockedTokensMultisigInstance._address,
+      bankMultisigInstanceAddress,
+      foundationMultisigInstanceAddress,
+      lockedTokensMultisigInstanceAddress,
       DAVTokenInstance._address,
       weiCap,
       vinciCap,
@@ -176,11 +180,11 @@ async function deploySequence() {
 
   // Transfer Crowdsale ownership to multisig
   await DAVCrowdsaleInstance.methods
-    .transferOwnership(ownerMultisigInstance._address)
+    .transferOwnership(ownerMultisigInstanceAddress)
     .send(defaultTransactionOptions);
   console.log(
     'Transfer Crowdsale ownership to multisig',
-    chalkAddr(ownerMultisigInstance._address),
+    chalkAddr(ownerMultisigInstanceAddress),
   );
 }
 
