@@ -21,10 +21,7 @@ module.exports = function deploy(
           gas: 6712388,
           gasPrice: '15000000000',
         },
-        (error, transactionHash, a) => {
-          if (a) {
-            console.log(a);
-          }
+        (error, transactionHash) => {
           if (error) {
             console.log(error);
             reject(error);
