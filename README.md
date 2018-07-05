@@ -5,4 +5,6 @@
 
 Smart contracts governing the DAV Token, Crowdsale, and the DAV network.
 
-The DAVToken and DAVCrowdsale have been independently audited by Matthew Di Ferrante - founder of Zero Knowledge Labs and a security researcher at the Ethereum Foundation. His final audit report can be read here: https://dav.network/dav-audit.pdf
+The DAVToken and DAVCrowdsale have been independently audited by Matthew Di Ferrante - founder of Zero Knowledge Labs and a security researcher at the Ethereum Foundation.
+
+The audit report can be found here: https://github.com/mattdf/audits/blob/master/dav/dav-audit.pdf
