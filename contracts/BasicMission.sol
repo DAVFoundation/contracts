@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity 0.4.24;
 
 import './Identity.sol';
 import './DAVToken.sol';
@@ -19,6 +19,7 @@ contract BasicMission {
   struct Mission {
     address seller;
     address buyer;
+    uint256 tokenAmount;
     uint256 cost;
     uint256 balance;
     bool isSigned;
@@ -55,9 +56,9 @@ contract BasicMission {
    * @notice Create a new mission
    * @param _sellerId The DAV Identity of the person providing the service
    * @param _buyerId The DAV Identity of the person ordering the service
-   * @param _cost The total cost of the mission to be paid by buyer
+   * @param _tokenAmount The amount of tokens to be burned when mission is completed
    */
-  function create(bytes32 _missionId, address _sellerId, address _buyerId, uint256 _cost) public {
+  function create(bytes32 _missionId, address _sellerId, address _buyerId, uint256 _tokenAmount) public payable {
     // Verify that message sender controls the buyer's wallet
     require(
       identity.verifyOwnership(_buyerId, msg.sender)
@@ -65,7 +66,7 @@ contract BasicMission {
 
     // Verify buyer's balance is sufficient
     require(
-      identity.getBalance(_buyerId) >= _cost
+      identity.getBalance(_buyerId) >= _tokenAmount
     );
 
     // Make sure id isn't registered already
@@ -74,14 +75,15 @@ contract BasicMission {
     );
 
     // Transfer tokens to the mission contract
-    token.transferFrom(msg.sender, this, _cost);
+    token.transferFrom(msg.sender, this, _tokenAmount);
 
     // Create mission
     missions[_missionId] = Mission({
       seller: _sellerId,
       buyer: _buyerId,
-      cost: _cost,
-      balance: _cost,
+      tokenAmount: _tokenAmount,
+      cost: msg.value,
+      balance: msg.value,
       isSigned: false
     });
 
@@ -92,12 +94,11 @@ contract BasicMission {
   /**
   * @notice Fund a mission
   * @param _missionId The id of the mission
-  * @param _buyerId The DAV Identity of the person ordering the service
   */
-  function fulfilled(bytes32 _missionId, address _buyerId) public {
+  function fulfilled(bytes32 _missionId) public {
     // Verify that message sender controls the seller's wallet
     require(
-      identity.verifyOwnership(_buyerId, msg.sender)
+      identity.verifyOwnership(missions[_missionId].buyer, msg.sender)
     );
     
     require(
@@ -108,12 +109,17 @@ contract BasicMission {
       missions[_missionId].balance == missions[_missionId].cost
     );
     
+    require(
+      address(this).balance >= missions[_missionId].cost
+    );
     
     // designate mission as signed
     missions[_missionId].isSigned = true;
     missions[_missionId].balance = 0;
-    token.approve(this, missions[_missionId].cost);
-    token.transferFrom(this, identity.getIdentityWallet(missions[_missionId].seller), missions[_missionId].cost);
+    token.burn(missions[_missionId].tokenAmount);
+
+    // transfer ETH to seller
+    identity.getIdentityWallet(missions[_missionId].seller).transfer(missions[_missionId].cost);
 
     // Event
     emit Signed(_missionId);

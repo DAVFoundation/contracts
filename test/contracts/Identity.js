@@ -1,10 +1,11 @@
 const Identity = artifacts.require('./Identity.sol');
-const DAVToken = artifacts.require('./mocks/DAVTokenMock.sol');
+const DAVToken = artifacts.require('./DAVToken.sol');
 const expectThrow = require('../helpers/assertRevert');
 const { registerIdentity, sampleIdentities } = require('../helpers/identity');
+const totalSupply = web3.toWei(1771428571, 'ether');
 
 const deployContracts = async () => {
-  const TokenContract = await DAVToken.new();
+  const TokenContract = await DAVToken.new(totalSupply);
   return Identity.new(TokenContract.address);
 };
 
@@ -74,7 +75,7 @@ contract('Identity', function(accounts) {
       const balance = await IdentityContract.getBalance(sampleIdentities[1].id);
       assert.equal(
         balance.toNumber(),
-        100,
+        totalSupply,
       );
     });
   });
