@@ -1,11 +1,11 @@
 {
-  "name": "dav-contracts",
+  "name": "contracts",
   "version": "0.0.1",
   "description": "Smart contracts used for DAV",
   "homepage": "https://dav.network",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DAVFoundation/dav-contracts"
+    "url": "https://github.com/DAVFoundation/contracts"
   },
   "license": "MIT",
   "author": "Tal Ater <tal@talater.com>",
