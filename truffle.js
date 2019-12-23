@@ -10,7 +10,7 @@ module.exports = {
       }
     },
     davtestnet: {
-      provider: function() {
+      provider: function () {
         return new HDWalletProvider(mnemonic, 'http://52.71.196.240:8545');
       },
       network_id: 2084,
@@ -18,21 +18,21 @@ module.exports = {
       gasPrice: 1
     },
     ropsten: {
-      provider: function() {
+      provider: function () {
         return new HDWalletProvider(mnemonic, 'https://ropsten.infura.io/wUiZtmeZ1KwjFrcC8zRO');
       },
       network_id: 3,
       gas: 4600000
     },
     rinkeby: {
-      provider: function() {
+      provider: function () {
         return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/wUiZtmeZ1KwjFrcC8zRO');
       },
       network_id: 4,
       gas: 4600000
     },
     mainnet: {
-      provider: function() {
+      provider: function () {
         return new HDWalletProvider(mnemonic, 'https://mainnet.infura.io/wUiZtmeZ1KwjFrcC8zRO');
       },
       network_id: 1,
@@ -44,6 +44,11 @@ module.exports = {
       port: 8545,
       network_id: '*', // Match any network id
       gasPrice: 50000000000
+    }
+  },
+  compilers: {
+    solc: {
+      version: '0.4.23'
     }
   }
 };
