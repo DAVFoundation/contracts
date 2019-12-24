@@ -10,6 +10,14 @@ import './OwnedPausableToken.sol';
  * @dev ERC20 token
  */
 contract DAVToken is IDAVToken, BurnableToken, OwnedPausableToken {
+  event EmitString(string logme);
+
+  function transfer1(address recipient, uint256 amount) public returns (bool) {
+    emit EmitString('transfer 1');
+    bool res = true;/* super.transfer(recipient,amount); */
+    emit EmitString('transfer 2');
+    return res;
+  }
 
   // Token constants
   string public name = 'DAV Token';
